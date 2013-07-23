@@ -7,6 +7,41 @@ body {
 	background-color: #ffffff;
 }
 
+.row-fluid {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 1000px;
+}
+
+#mainlogo {
+	text-align: center;
+	padding-bottom: 30px; 
+}
+
+.project_highlights {
+	font-size: 125%;
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.project_highlights li {
+	margin: 0 0 0.5em 0;
+}
+
+.project_highlights ul {
+	margin: 0 0 60px 2em;
+}
+
+.project_details ul {
+	margin: 0 1em 0 1em;
+}
+
+.project_details li {
+	list-style: none;
+	margin: 0 0 0.5em 0;
+}
+
 /* Email quick fix */
 #super-small-email { display: none; }
 @media (max-width: 767px) {

@@ -22,32 +22,26 @@
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
-					<a class="brand" href="/">Stig</a>
-					<ul class="nav">
-						<li class="active"><a href="/">Home</a></li>
-					</ul>
 				</div>
 			</div>
 		</div>
 		<div class="container-fluid">
 			<div class="row-fluid">
 				<div class="hero-unit">
-					<div class="row-fluid">
-						<img src="stig.png" width="400px"/>
+					<div class="row-fluid" id="mainlogo">
+						<img src="stig.png" width="600px" alt="STIG DATABASE"/>
 					</div>
-					<div class="row-fluid">
-						<p>A large-scale database, distributed runtime environment, and programming language.
-						Useful for developing the back- and middle-tiers of web apps in a single, integrated stack.
-						An Old Norse word which means ‘path-finder,’ which seems appropriate for a graph database.
-						Unofficially named after the race-car driver because he’s known to be fast and reliable.
-						Under development at Tagged for internal use but we’d like to share it.
-						Produced by a small team who have been working exclusively on the project for over three years.
-						Currently in use at Tagged to run the performance-critical anti-spam system and its use is expanding.
-						Providing orders-of-magnitude performance improvements over other systems at Tagged.
-						Protected in part by patent applications but is still potentially open-sourceable.
-						Seeking early adopters and project contributors.</p>        <!-- Begin MailChimp Signup Form -->
-					</div>
-					<div class="row-fluid">
+					<div class="row-fluid project_highlights">
+						<h2>Highlights</h2>
+						<ul>
+							<li>A large-scale database, distributed runtime environment, and programming language under development at Tagged</li>
+							<li>Produced by a small team that has been working exclusively on the project for over three years</li>
+							<li>Providing orders-of-magnitude performance improvements over other systems at Tagged</li>
+							<li>Developed for internal use but we'd like to share it</li>
+							<li>Seeking early adopters and project contributors</p>
+						</ul>
+
+						<!-- Begin MailChimp Signup Form -->
 						<div id="mc_embed_signup" class="span12 center">
 							<form action="http://tagged.us7.list-manage.com/subscribe/post?u=d16ab14a651333ad5da06bf6c&amp;id=fbc2b65279" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
 								<div id="semi-small-email" class="input-append">
@@ -56,14 +50,15 @@
 								</div>
 							</form>
 						</div>
-					</div>
-					<!--End mc_embed_signup-->
+						<!--End mc_embed_signup-->
+
+					</div>					
 				</div>
 			</div>
 		</div>
 		<div class="row-fluid">
 			<div class="span1"></div>
-			<div class="span3">
+			<div class="span3 project_details">
 				<h2>Project Tenets</h2>
 				<p>
 				<ul>
@@ -74,8 +69,8 @@
 				</p>
 				<!-- <p><a class="btn" href="/about">More about &raquo;</a></p> //-->
 			</div>
-			<div class="span3">
-				<h2>As a NoSQL Project</h2>
+			<div class="span3 project_details">
+				<h2>NoSQL</h2>
 				<p>
 				<ul>
 					<li>
@@ -85,12 +80,12 @@
 					<b>Data Model</b> Represent data as a graph of objects connected by edges.
 					</li>
 					<li><b>Commit Model</b> Don’t ever block updates. Resolve commits asynchronously and provide notifications.</li>
-					<li><b>Performance</b> Support near real-time apps like games.  De-emphasize graph analytics in favor of OLTP.</li>
+					<li><b>Performance</b> Support OLTP and near real-time apps like games</li>
 					<li><b>Web-Readiness</b> Expect clients to disconnect and reconnect a lot. Make progress in the background.</li></p>
 				</ul>
 				<!-- <p><a class="btn" href="/database">More about Stig &raquo;</a></p> //-->
 			</div>
-			<div class="span3">
+			<div class="span3 project_details">
 				<h2>Open Source</h2>
 				<p>
 				<ul>
