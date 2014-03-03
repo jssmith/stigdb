@@ -12,7 +12,7 @@ make
 make test
 ```
 
-The above commands creates a layout like so:
+The above commands create a layout like so:
 ```
 ~
 |-- stig
