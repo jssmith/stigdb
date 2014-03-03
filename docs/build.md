@@ -3,9 +3,22 @@
 ## Quick Start
 
 ```
-git clone https://github.com/tagged/stigdb.git ./src
+mkdir stig
+cd stig
+git clone https://github.com/StigDB/stigdb.git src
+export PATH=$PATH:$HOME/stig/src/tools
+cd src
 make
 make test
+```
+
+The above commands creates a layout like so:
+```
+~
+|-- stig
+     |-- .starsha
+     |-- out
+     |-- src
 ```
 
 ## Supported Platforms
@@ -52,24 +65,67 @@ Shortly Stig will be switching from gcc to clang+LLVM 3.4, but at this moment co
 #### Ubuntu
 
 ```
-apt-get install flex bison util-linux git build-essential uuid-dev libaio-dev libgmp-dev libsctp-dev lksctp-tools zlib1g-dev libicu-dev libreadline6-dev libsnappy-dev
+apt-get install flex
+                bison
+                util-linux
+                git
+                build-essential
+                uuid-dev
+                libaio-dev
+                libgmp-dev
+                libsctp-dev
+                lksctp-tools
+                zlib1g-dev
+                libicu-dev
+                libreadline6-dev
+                libsnappy-dev
 ```
 
 #### CentOS
 
 ```
 yum groupinstall "Development Tools" --exclude=git
-yum install flex bison util-linux uuid-devel libaio-devel gmp-devel mpfr-devel libmpc-devel libuuid-devel glibc-devel libicu-devel lksctp-tools lksctp-tools-devel readline-devel zlib-devel snappy-devel
+yum install flex
+            bison
+            util-linux
+            uuid-devel
+            libaio-devel
+            gmp-devel
+            mpfr-devel
+            libmpc-devel
+            libuuid-devel
+            glibc-devel
+            libicu-devel
+            lksctp-tools
+            lksctp-tools-devel
+            readline-devel
+            zlib-devel
+            snappy-devel
 ```
+
+#### ArchLinux
+pacman -S flex
+          bison
+          util-linux
+          libaio
+          gmp
+          mpfr
+          libmpc
+          glibc
+          icu
+          lksctp-tools
+          readline
+          zlib
+          snappy
 
 ## Retrieving the Stig source code
 
 Currently the build system requires that the Stig source code be located in a directory named `src`.
 
-The Stig source code is located in the [stigdb](https://github.com/tagged/stigdb) repository on Github. To clone the repository:
+The Stig source code is located in the [stigdb](https://github.com/StigDB/stigdb) repository on Github. To clone the repository:
 
 ```
-git clone https://github.com/tagged/stigdb.git ./src
+git clone https://github.com/StigDB/stigdb.git src
 ```
 
 Naturally, adjust the destination path above accordingly for your needs. Just be sure the code ends up in a directory named `src`.
