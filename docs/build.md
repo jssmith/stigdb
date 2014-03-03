@@ -104,6 +104,7 @@ yum install flex
 ```
 
 #### ArchLinux
+```
 pacman -S flex
           bison
           util-linux
@@ -117,6 +118,7 @@ pacman -S flex
           readline
           zlib
           snappy
+```
 
 ## Retrieving the Stig source code
 
