@@ -3,7 +3,7 @@
 ## Quick Start
 
 ```
-git clone https://github.com/tagged/stigdb.git ./src
+git clone http://github.com/stigdb/stigdb.git ./src
 make
 make test
 ```
@@ -66,10 +66,10 @@ yum install flex bison util-linux uuid-devel libaio-devel gmp-devel mpfr-devel l
 
 Currently the build system requires that the Stig source code be located in a directory named `src`.
 
-The Stig source code is located in the [stigdb](https://github.com/tagged/stigdb) repository on Github. To clone the repository:
+The Stig source code is located in the [stigdb](http://github.com/stigdb/stigdb) repository on Github. To clone the repository:
 
 ```
-git clone https://github.com/tagged/stigdb.git ./src
+git clone http://github.com/stigdb/stigdb.git ./src
 ```
 
 Naturally, adjust the destination path above accordingly for your needs. Just be sure the code ends up in a directory named `src`.
@@ -133,9 +133,8 @@ The [gcc installation docs](http://gcc.gnu.org/install/index.html) and [wiki](ht
 
 -----
 
-build.md (c) by Tagged, Inc.
+build.md Copyright 2010-2014 Stig LLC
 
 build.md is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
 
 You should have received a copy of the license along with this work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
-
