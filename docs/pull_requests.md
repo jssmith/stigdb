@@ -13,7 +13,7 @@ The Stig team uses the [Fork & Pull](https://help.github.com/articles/using-pull
 
 ### Fork the stigdb repository
 
-Your work should be performed on your own copy of the [stigdb repository](). To fork the repo, click the [fork button](http://github.com/StigDB/stigdb/fork) button on the [GitHub](http://github.com) web interface.
+Your work should be performed on your own copy of the [stigdb repository](http://github.com/StigDB/stigdb). To fork the repo, click the [fork button](http://github.com/StigDB/stigdb/fork) button on the [GitHub](http://github.com) web interface.
 
 ### Clone the repository to your local machine
 
