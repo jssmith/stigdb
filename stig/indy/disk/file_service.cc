@@ -1,15 +1,15 @@
-/* <stig/indy/disk/file_service.cc> 
+/* <stig/indy/disk/file_service.cc>
 
    Implements <stig/indy/disk/file_service.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,8 @@ TFileService::TFileService(Base::TScheduler *scheduler,
                            size_t image_2_block_id,
                            const std::vector<size_t> &append_log_block_vec,
                            const TFileInitCb &file_init_cb,
-                           bool create)
+                           bool create,
+                           bool abort_on_append_log_scan)
     : Frame(nullptr),
       BGScheduler(runner_cons),
       VolMan(vol_man),
@@ -43,7 +44,8 @@ TFileService::TFileService(Base::TScheduler *scheduler,
       CurBaseImageCounter(0UL),
       CurRingSector(0UL),
       OpQueue(this),
-      ShuttingDown(false) {
+      ShuttingDown(false),
+      AbortOnAppendLogScan(abort_on_append_log_scan) {
   /* allocate event pools */
   Image1BlockIdVec.push_back(image_1_block_id);
   Image2BlockIdVec.push_back(image_2_block_id);
@@ -57,7 +59,8 @@ TFileService::TFileService(Base::TScheduler *scheduler,
     bool both_images_loaded_success = true;
     try {
       TCompletionTrigger trigger;
-      VolMan->ReadBlock(HERE, Util::CheckedBlock, Source::FileService, image_1_buf_block->GetData(), image_1_block_id, RealTime, trigger);
+      VolMan->ReadBlock(HERE, Util::CheckedBlock, Source::FileService, image_1_buf_block->GetData(), image_1_block_id, RealTime, trigger,
+                        false /* don't abort on error since we're trying to build a valid image */);
       trigger.Wait();
       const size_t *buf_1 = reinterpret_cast<const size_t *>(image_1_buf_block->GetData());
       version_1 = buf_1[0];
@@ -66,7 +69,8 @@ TFileService::TFileService(Base::TScheduler *scheduler,
     }
     try {
       TCompletionTrigger trigger;
-      VolMan->ReadBlock(HERE, Util::CheckedBlock, Source::FileService, image_2_buf_block->GetData(), image_2_block_id, RealTime, trigger);
+      VolMan->ReadBlock(HERE, Util::CheckedBlock, Source::FileService, image_2_buf_block->GetData(), image_2_block_id, RealTime, trigger,
+                        false /* don't abort on error since we're trying to build a valid image */);
       trigger.Wait();
       const size_t *buf_2 = reinterpret_cast<const size_t *>(image_2_buf_block->GetData());
       version_2 = buf_2[0];
@@ -128,7 +132,7 @@ TFileService::TFileService(Base::TScheduler *scheduler,
         assert(AppendLogBlockVec.size());
         size_t block_of_first_append_log = AppendLogBlockVec[0];
 
-
+        /* read the head sector of the append log to figure out which version number it has. */
         VolMan->Read(HERE,
                      Util::CheckedSector,
                      Source::FileService,
@@ -136,8 +140,18 @@ TFileService::TFileService(Base::TScheduler *scheduler,
                      (block_of_first_append_log * Util::PhysicalBlockSize),
                      Util::PhysicalSectorSize,
                      RealTime,
-                     trigger);
-        trigger.Wait();
+                     trigger,
+                     false /* We think of sectors as atomic. If our sector read fails we're favoring abort over recovering an old state. we throw in
+                     the trigger and abort on the wait*/);
+        try {
+          trigger.Wait();
+        } catch (const TDiskError &ex) {
+          syslog(LOG_ERR, "File System is corrupt. Caught Disk Corruption in first entry of append log.");
+          if (AbortOnAppendLogScan) {
+            abort();
+          }
+          throw std::runtime_error("File System is corrupt. Caught Disk Corruption in first entry append log.");
+        }
         const size_t *first_append_log_buf = reinterpret_cast<const size_t *>(append_log_first_buf_block->GetData());
         const size_t first_append_log_version = first_append_log_buf[0];
         const size_t alternate_image_block_version = alternate_buf[0];
@@ -163,17 +177,16 @@ TFileService::TFileService(Base::TScheduler *scheduler,
     std::vector<size_t> ring_offset_vec;
     for (auto block_id : AppendLogBlockVec) {
       append_log_buf_vec.emplace_back(new TBufBlock());
-      for (size_t i = 0; i < NumSectorsPerBlock; ++i) {
-
-        VolMan->Read(HERE,
-                     Util::CheckedSector,
-                     Source::FileService,
-                     append_log_buf_vec.back()->GetData() + (i * Util::PhysicalSectorSize),
-                     (block_id * Util::PhysicalBlockSize) + (i * Util::PhysicalSectorSize),
-                     Util::PhysicalSectorSize,
-                     RealTime,
-                     trigger);
-      }
+      VolMan->Read(HERE,
+                   Util::SectorCheckedBlock,
+                   Source::FileService,
+                   append_log_buf_vec.back()->GetData(),
+                   (block_id * Util::PhysicalBlockSize),
+                   Util::PhysicalBlockSize,
+                   RealTime,
+                   trigger,
+                   false /* We think of sectors as atomic. If our sector read fails we're favoring abort over recovering an old state. we throw in the
+                   trigger and abort on the wait*/);
     }
 
     for (size_t i = 0; i < NumAppendLogSectors; ++i) {
@@ -183,6 +196,9 @@ TFileService::TFileService(Base::TScheduler *scheduler,
       trigger.Wait();
     } catch (const TDiskError &ex) {
       syslog(LOG_ERR, "File System is corrupt. Caught Disk Corruption in append log.");
+      if (AbortOnAppendLogScan) {
+        abort();
+      }
       throw std::runtime_error("File System is corrupt. Caught Disk Corruption in append log.");
     }
     /* if one of the base images was corrupt, and the first version number (fvn) in the append log is greater than our base image version number (bivn) by more than 1, then we're in a corrupt state */ {
@@ -540,22 +556,22 @@ void TFileService::Runner() {
               break;
             }
           }
-        } catch (const TDiskError &err) {
+        } catch (const TDiskFailure &err) {
           for(;;) {
             TOp *op = cur_queue.TryGetFirstMember();
             if (op) {
-              op->Complete(Error, err.what());
+              op->Complete(DiskFailure, nullptr);
               delete op;
             } else {
               break;
             }
           }
           throw;
-        } catch (const TDiskFailure &err) {
+        } catch (const TDiskError &err) {
           for(;;) {
             TOp *op = cur_queue.TryGetFirstMember();
             if (op) {
-              op->Complete(DiskFailure, nullptr);
+              op->Complete(Error, err.what());
               delete op;
             } else {
               break;
@@ -757,7 +773,8 @@ bool TFileService::TryLoadFromBaseImage(size_t base_image_block, const size_t *c
                           cur_buf_block->GetData(),
                           next_block_id,
                           RealTime,
-                          trigger);
+                          trigger,
+                          false /* don't abort on error since we're trying to build a valid image */);
         trigger.Wait();
       }
     }
@@ -804,17 +821,15 @@ void TFileService::ZeroAppendLog() {
   std::unique_ptr<TBufBlock> buf_block(new TBufBlock());
   memset(buf_block->GetData(), 0, Util::PhysicalBlockSize);
   for (auto block_id : AppendLogBlockVec) { /* zero-out each append block */
-    for (size_t i = 0; i < NumSectorsPerBlock; ++i) {
-      VolMan->Write(HERE,
-                    Util::CheckedSector,
-                    Source::FileService,
-                    buf_block->GetData() + (i * Util::PhysicalSectorSize),
-                    (block_id * Util::PhysicalBlockSize) + (i * Util::PhysicalSectorSize),
-                    Util::PhysicalSectorSize,
-                    RealTime,
-                    Util::TCacheInstr::NoCache,
-                    trigger);
-      trigger.Wait();
-    }
+    VolMan->Write(HERE,
+                  Util::SectorCheckedBlock,
+                  Source::FileService,
+                  buf_block->GetData(),
+                  (block_id * Util::PhysicalBlockSize),
+                  Util::PhysicalBlockSize,
+                  RealTime,
+                  Util::TCacheInstr::NoCache,
+                  trigger);
+    trigger.Wait();
   }
 }
