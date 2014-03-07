@@ -1,5 +1,11 @@
 # Pull Request Process
 
+## NOTA BENE!
+
+ALL CONTRIBUTIONS TO STIGDB REQUIRE A SIGNED [CONTRIBUTOR LICENSING AGREEMENT](https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA_Process.md).
+
+We will not be able to merge in any contributions until you have a signed CLA on file with us.
+
 ## General Guidelines
 
 * _All work happens in git and GitHub._ This means that you must have a [GitHub account](https://github.com/join) in order to contribute to Stig.
