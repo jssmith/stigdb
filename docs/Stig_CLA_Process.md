@@ -12,7 +12,7 @@ Thank you for your interest in contributing to the StigDB ("Stig") project! We w
 
       Learn more about the agreement in its [Appendix](https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA-appendix.md).
     
-    * When complete, email a PDF of the signed agreement to: [EMAIL]
+    * When complete, email a PDF of the signed agreement to [stig-legal@stigdb.org](mailto:stig-legal@stigdb.org).
 
     * Once you have received a confirmation that your signed CLA was
       received, contribute your code, documentation, or any other
