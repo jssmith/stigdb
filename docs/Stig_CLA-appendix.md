@@ -17,7 +17,7 @@ While there are several other minor changes to the Numenta CL, there are two pla
 
 In both cases these sentences were removed on the advice of our lawyers. They advised that these sentences were either incorrect legally (in the case of the former) or were inadvisable (in the case of the latter).
 
-Stig welcomes feedback on the CLA document and the process surrounding it. Please raise all concerns on the [Stig mailing list](URL) or by [opening an issue](https://github.com/StigDB/stigdb/issues/new) so the community may have a public discussion.
+Stig welcomes feedback on the CLA document and the process surrounding it. Please raise all concerns on the [Stig mailing list](http://lists.stigdb.org/listinfo.cgi/stigdb-stigdb.org) or by [opening an issue](https://github.com/StigDB/stigdb/issues/new) so the community may have a public discussion.
 
 -----
 
