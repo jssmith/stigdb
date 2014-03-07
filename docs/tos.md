@@ -42,7 +42,7 @@ You understand that Materials may contain the opinions of others and You do not 
 
 ### Copyright Infringement. 
 
-If You believe that any Materials infringe Your copyrights, please send an email detailing your complaint to [EMAIL]
+If You believe that any Materials infringe Your copyrights, please send an email detailing your complaint to [stig-legal@stigdb.org](mailto:stig-legal@stigdb.org).
 
 ### Management of Materials and Access. 
 

@@ -4,7 +4,7 @@ As part of Stig LLC's ("Stig") commitment to making StigDB a great place to meet
 
 Specific communities, chats, and message boards may also have additional guidelines which govern your use, so be sure to review them in addition to this Code of Conduct. Stig is not responsible for the content or activities in any user-created, non-Stig managed Communication Service.
 
-All activity on Stig is also governed by the Stig Terms of Use. To read the Stig Terms of Use, please see this URL: [URL]
+All activity on Stig is also governed by the [Stig Terms of Use](https://github.com/StigDB/stigdb/blob/master/docs/tos.md).
 
 ## RESPECT OTHERS
 
@@ -68,7 +68,7 @@ We caution you against giving out personally identifiable information (such as s
 
 Some personal information you provide to Stig may be stored outside of the country in which you reside.
 
-To read the Stig Privacy Statement, please see this link: [URL]
+Please read the [Stig Privacy Statement](https://github.com/StigDB/stigdb/blob/master/docs/privacy_policy.md).
 
 -----
 
