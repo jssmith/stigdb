@@ -226,10 +226,6 @@ TServer::TCmd::TMeta::TMeta(const char *desc)
       "The cores which will be pinned by the disk mergers."
   );
   Param(
-      &TCmd::WalkerLocalCacheSize, "walker_local_cache_size", Optional, "walker_local_cache_size\0",
-      "The maximum number of blocks held in cache by a present walker."
-  );
-  Param(
       &TCmd::AddressOfMaster, "address_of_master", Optional, "address_of_master\0",
       "The IP address of the master to which this slave should try to connect."
   );
@@ -382,7 +378,6 @@ TServer::TCmd::TCmd()
       NumMemMergeThreads(3),
       NumDiskMergeThreads(8),
       MaxRepoCacheSize(10000),
-      WalkerLocalCacheSize(64),
       ReportingPortNumber(19388),
       AllowTailing(true),
       AllowFileSync(true),
@@ -685,7 +680,6 @@ void TServer::Init() {
                                                                             &BGFastRunner,
                                                                             block_slots_available_per_merger,
                                                                             Cmd.MaxRepoCacheSize,
-                                                                            Cmd.WalkerLocalCacheSize,
                                                                             Cmd.TempFileConsolidationThreshold,
                                                                             Cmd.MemMergeCoreVec,
                                                                             Cmd.DiskMergeCoreVec,
