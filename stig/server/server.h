@@ -225,9 +225,6 @@ namespace Stig {
         size_t DiskMaxAioNum;
 
         /* TODO */
-        size_t MinDiscardBlockConsideration;
-
-        /* TODO */
         double HighDiskUtilizationThreshold;
 
         /* TODO */
