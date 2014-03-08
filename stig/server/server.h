@@ -261,9 +261,6 @@ namespace Stig {
         size_t MaxRepoCacheSize;
 
         /* TODO */
-        size_t WalkerLocalCacheSize;
-
-        /* TODO */
         std::vector<size_t> FastCoreVec;
 
         /* TODO */
