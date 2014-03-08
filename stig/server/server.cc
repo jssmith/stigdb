@@ -154,16 +154,8 @@ TServer::TCmd::TMeta::TMeta(const char *desc)
       "The size of the file service append log in MB."
   );
   Param(
-      &TCmd::DiskQueueDepth, "disk_queue_depth", Optional, "disk_queue_depth\0",
-      "The depth of the disk block device queue."
-  );
-  Param(
       &TCmd::DiskMaxAioNum, "disk_max_aio_num", Optional, "disk_max_aio_num\0",
       "The maximum number of aio events at a time."
-  );
-  Param(
-      &TCmd::MinDiscardBlockConsideration, "min_discard_block_consideration", Optional, "min_discard_block_consideration\0",
-      "The minimum number of consecutive aligned blocks required to do a discard."
   );
   Param(
       &TCmd::HighDiskUtilizationThreshold, "high_disk_utilization_threshold", Optional, "high_disk_utilization_threshold\0",
@@ -202,10 +194,6 @@ TServer::TCmd::TMeta::TMeta(const char *desc)
       "The starting state of this server. Either SOLO or SLAVE."
   );
   Param(
-      &TCmd::NumDiskWorkerThreads, "num_disk_worker_threads", Optional, "num_disk_worker_threads\0",
-      "The number of threads dedicated to executing disk request completion callbacks."
-  );
-  Param(
       &TCmd::NumMemMergeThreads, "num_mem_threads", Optional, "num_mem_threads\0",
       "The number of threads merging and flushing memory layers in repos."
   );
@@ -236,10 +224,6 @@ TServer::TCmd::TMeta::TMeta(const char *desc)
   Param(
       &TCmd::DiskMergeCoreVec, "disk_merge_cores", Required, "disk_merge_cores\0",
       "The cores which will be pinned by the disk mergers."
-  );
-  Param(
-      &TCmd::WalkerLocalCacheSize, "walker_local_cache_size", Optional, "walker_local_cache_size\0",
-      "The maximum number of blocks held in cache by a present walker."
   );
   Param(
       &TCmd::AddressOfMaster, "address_of_master", Optional, "address_of_master\0",
@@ -304,14 +288,6 @@ TServer::TCmd::TMeta::TMeta(const char *desc)
   Param(
       &TCmd::RepoMappingEntryPoolSize, "repo_mapping_entry_pool_size", Optional, "repo_mapping_entry_pool_size\0",
       "The number of repo mapping entry pool objects."
-  );
-  Param(
-      &TCmd::WeakRepoPoolSize, "weak_repo_pool_size", Optional, "weak_repo_pool_size\0",
-      "The number of weak repo pool objects."
-  );
-  Param(
-      &TCmd::StrongRepoPoolSize, "strong_repo_pool_size", Optional, "strong_repo_pool_size\0",
-      "The number of strong repo pool objects."
   );
   Param(
       &TCmd::RepoDataLayerPoolSize, "repo_data_layer_pool_size", Optional, "repo_data_layer_pool_size\0",
@@ -382,9 +358,7 @@ TServer::TCmd::TCmd()
       PageCacheSizeMB(2048),
       BlockCacheSizeMB(512),
       FileServiceAppendLogMB(4),
-      DiskQueueDepth(128),
       DiskMaxAioNum(65024),
-      MinDiscardBlockConsideration((256 * 1024) / Disk::Util::PhysicalBlockSize),
       HighDiskUtilizationThreshold(0.9),
       DiscardOnCreate(false),
       ReplicationSyncBufMB(32),
@@ -393,11 +367,9 @@ TServer::TCmd::TCmd()
       ReplicationInterval(100),
       DurableWriteInterval(40),
       DurableMergeInterval(10),
-      NumDiskWorkerThreads(2),
       NumMemMergeThreads(3),
       NumDiskMergeThreads(8),
       MaxRepoCacheSize(10000),
-      WalkerLocalCacheSize(64),
       ReportingPortNumber(19388),
       AllowTailing(true),
       AllowFileSync(true),
@@ -410,8 +382,6 @@ TServer::TCmd::TCmd()
       DurableMemEntryPoolSize(500000UL),
       RepoMappingPoolSize(50000UL),
       RepoMappingEntryPoolSize(500000UL),
-      WeakRepoPoolSize(50000UL),
-      StrongRepoPoolSize(50000UL),
       RepoDataLayerPoolSize(50000UL),
       TransactionMutationPoolSize(15000UL),
       TransactionPoolSize(5000UL),
@@ -564,9 +534,7 @@ void TServer::Init() {
     TUpdate::InitUpdatePool(Cmd.UpdatePoolSize);
     TUpdate::InitEntryPool(Cmd.UpdateEntryPoolSize);
 
-    //Disk::TController::InitEventPool(Cmd.ControllerEventPoolSize);
     Disk::TBufBlock::Pool.Init(Cmd.DiskBufferBlockPoolSize);
-    //Disk::TCache::TObj::Pool.Init(Cmd.DiskCacheBlockPoolSize);
 
     /******** End Object Pools ********/
 
@@ -700,7 +668,6 @@ void TServer::Init() {
                                                                             &BGFastRunner,
                                                                             block_slots_available_per_merger,
                                                                             Cmd.MaxRepoCacheSize,
-                                                                            Cmd.WalkerLocalCacheSize,
                                                                             Cmd.TempFileConsolidationThreshold,
                                                                             Cmd.MemMergeCoreVec,
                                                                             Cmd.DiskMergeCoreVec,

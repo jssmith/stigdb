@@ -222,13 +222,7 @@ namespace Stig {
         size_t FileServiceAppendLogMB;
 
         /* TODO */
-        size_t DiskQueueDepth;
-
-        /* TODO */
         size_t DiskMaxAioNum;
-
-        /* TODO */
-        size_t MinDiscardBlockConsideration;
 
         /* TODO */
         double HighDiskUtilizationThreshold;
@@ -258,9 +252,6 @@ namespace Stig {
         std::string StartingState;
 
         /* TODO */
-        size_t NumDiskWorkerThreads;
-
-        /* TODO */
         size_t NumMemMergeThreads;
 
         /* TODO */
@@ -268,9 +259,6 @@ namespace Stig {
 
         /* TODO */
         size_t MaxRepoCacheSize;
-
-        /* TODO */
-        size_t WalkerLocalCacheSize;
 
         /* TODO */
         std::vector<size_t> FastCoreVec;
@@ -317,8 +305,6 @@ namespace Stig {
         /* TODO */
         size_t RepoMappingPoolSize;
         size_t RepoMappingEntryPoolSize;
-        size_t WeakRepoPoolSize;
-        size_t StrongRepoPoolSize;
         size_t RepoDataLayerPoolSize;
 
         /* TODO */
