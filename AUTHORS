@@ -8,7 +8,7 @@ CLA?: Whether we have a signed CLA on file in stigdb-legal
 Name                        Freenet IRC        Github ID         CLA?
 =====================================================================
 Jason Lucas                 JasonL9000         jasonl9000        Y
-Joris Van Remoortere        jmlvanre           jmlvanre
+Joris Van Remoortere        jmlvanre           jmlvanre          Y
 Cody Maloney                firebird347        cmaloney          Y
 Michael Park                mpark              mpark
 Chris Tidder                ctidder            ctidder
