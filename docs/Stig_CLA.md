@@ -18,6 +18,9 @@ Please review and submit this Agreement per [the instructions](https://github.co
 A text-only version of this document is available at 
 https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA.txt.
 
+A PDF version of this document is available at
+https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA.pdf.
+
 Please read the following document carefully before signing and keep
 a copy for your records.
 
