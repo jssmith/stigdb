@@ -4,6 +4,8 @@
 
 ```
 git clone http://github.com/stigdb/stigdb.git ./src
+cd src
+chmod +x bootstrap.sh
 make
 make test
 ```
