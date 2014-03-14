@@ -4,6 +4,8 @@
 
 ```
 git clone http://github.com/stigdb/stigdb.git ./src
+cd src
+chmod +x bootstrap.sh
 make
 make test
 ```
@@ -118,6 +120,12 @@ TBD
 TBD
 
 ## Troubleshooting
+
+If the build ever fails, please run the following before trying again:
+
+```
+make clean
+```
 
 TBD as problems arise.
 
