@@ -337,7 +337,7 @@ namespace Stig {
 
           /* TODO */
           class TEvent
-              : public Base::TThreadLocalPoolManager<TEvent>::TObjBase {
+              : public Base::TThreadLocalGlobalPoolManager<TEvent>::TObjBase {
             NO_COPY_SEMANTICS(TEvent);
             public:
 
@@ -362,7 +362,7 @@ namespace Stig {
 
             /* TriggeredOp */
             void Init(TPersistentDevice *device,
-                      Base::TThreadLocalPoolManager<TEvent>::TThreadLocalRegisteredPool *pool,
+                      Base::TThreadLocalGlobalPoolManager<TEvent>::TThreadLocalPool *pool,
                       const Base::TCodeLocation &code_location /* DEBUG */,
                       TKind kind,
                       DiskPriority priority,
@@ -376,7 +376,7 @@ namespace Stig {
 
             /* TriggeredVOp */
             void Init(TPersistentDevice *device,
-                      Base::TThreadLocalPoolManager<TEvent>::TThreadLocalRegisteredPool *pool,
+                      Base::TThreadLocalGlobalPoolManager<TEvent>::TThreadLocalPool *pool,
                       const Base::TCodeLocation &code_location /* DEBUG */,
                       TKind kind,
                       DiskPriority priority,
@@ -390,7 +390,7 @@ namespace Stig {
 
             /* CallbackOp */
             void Init(TPersistentDevice *device,
-                      Base::TThreadLocalPoolManager<TEvent>::TThreadLocalRegisteredPool *pool,
+                      Base::TThreadLocalGlobalPoolManager<TEvent>::TThreadLocalPool *pool,
                       const Base::TCodeLocation &code_location /* DEBUG */,
                       TKind kind,
                       DiskPriority priority,
@@ -404,7 +404,7 @@ namespace Stig {
 
             /* CallbackVOp */
             void Init(TPersistentDevice *device,
-                      Base::TThreadLocalPoolManager<TEvent>::TThreadLocalRegisteredPool *pool,
+                      Base::TThreadLocalGlobalPoolManager<TEvent>::TThreadLocalPool *pool,
                       const Base::TCodeLocation &code_location /* DEBUG */,
                       TKind kind,
                       DiskPriority priority,
@@ -425,9 +425,20 @@ namespace Stig {
             }
             #endif
 
+            static inline void InitializeDiskEventPoolManager(size_t num_event_obj) {
+              if (!DiskEventPoolManager) {
+                DiskEventPoolManager = std::unique_ptr<Base::TThreadLocalGlobalPoolManager<Indy::Disk::Util::TDiskController::TEvent>>(
+                  new Base::TThreadLocalGlobalPoolManager<Indy::Disk::Util::TDiskController::TEvent>(num_event_obj));
+              }
+            }
+
+            static inline void FinalizeDiskEventPoolManager() {
+              DiskEventPoolManager.reset();
+            }
+
             /* TODO */
-            static Base::TThreadLocalPoolManager<Indy::Disk::Util::TDiskController::TEvent> DiskEventPoolManager;
-            static __thread Base::TThreadLocalPoolManager<TEvent>::TThreadLocalRegisteredPool *LocalEventPool;
+            static std::unique_ptr<Base::TThreadLocalGlobalPoolManager<Indy::Disk::Util::TDiskController::TEvent>> DiskEventPoolManager;
+            static __thread Base::TThreadLocalGlobalPoolManager<TEvent>::TThreadLocalPool *LocalEventPool;
 
             private:
 
@@ -458,7 +469,7 @@ namespace Stig {
             TDeviceMembership::TImpl DeviceMembership;
 
             /* TODO */
-            Base::TThreadLocalPoolManager<TEvent>::TThreadLocalRegisteredPool *EventPool;
+            Base::TThreadLocalGlobalPoolManager<TEvent>::TThreadLocalPool *EventPool;
 
             /* TODO */
             TKind Kind;
