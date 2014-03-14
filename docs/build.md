@@ -72,20 +72,21 @@ Shortly Stig will be switching from gcc to clang+LLVM 3.4, but at this moment co
 ### Other programs
 
 * git
+* valgrind
 
 ### Platform-specific package install command lines
 
 #### Ubuntu
 
 ```
-apt-get install flex bison util-linux git build-essential uuid-dev libaio-dev libgmp-dev libsctp-dev lksctp-tools zlib1g-dev libicu-dev libreadline6-dev libsnappy-dev
+apt-get install flex bison util-linux git build-essential uuid-dev libaio-dev libgmp-dev libsctp-dev lksctp-tools zlib1g-dev libicu-dev libreadline6-dev libsnappy-dev valgrind
 ```
 
 #### CentOS
 
 ```
 yum groupinstall "Development Tools" --exclude=git
-yum install flex bison util-linux uuid-devel libaio-devel gmp-devel mpfr-devel libmpc-devel libuuid-devel glibc-devel libicu-devel lksctp-tools lksctp-tools-devel readline-devel zlib-devel snappy-devel
+yum install flex bison util-linux uuid-devel libaio-devel gmp-devel mpfr-devel libmpc-devel libuuid-devel glibc-devel libicu-devel lksctp-tools lksctp-tools-devel readline-devel zlib-devel snappy-devel valgrind
 ```
 
 ## Retrieving the Stig source code
