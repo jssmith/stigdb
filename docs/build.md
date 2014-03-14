@@ -1,5 +1,26 @@
 # BUILDING STIG
 
+* [Quick Start](#quick-start)
+* [Supported Platforms](#supported-platforms)
+* [Pre-Requisites](#pre-requisites)
+    * [Compiler](#compiler)
+    * [Libraries](#libraries)
+    * [Other programs](#other-programs)
+    * [Platform-specific package install command lines](#platform-specific-package-install-command-lines)
+        * [Ubuntu](#ubuntu)
+        * [CentOS](#centos)
+* [Retrieving the Stig Source Code](#retrieving-the-stig-source-code)
+* [Build Commands](#build-commands)
+    * [make](#make)
+    * [make test](#make-test)
+    * [make test_lang](#make-test_lang)
+    * [make clean](#make-clean)
+* [Platform-specific](#platform-specific)
+    * [Ubuntu (13.10 and above)](#ubuntu-1310-and-above)
+    * [CentOS (6.4 and above)](#centos-64-and-above)
+* [Troubleshooting](#troubleshooting)
+* [gcc compile tips](#gcc-compile-tips)
+
 ## Quick Start
 
 ```
@@ -29,7 +50,7 @@ There are several prerequisites which must be installed for a successful build o
 
 ### Compiler
 
-* gcc-4.8.2 or above (4.8.0 has a nasty bug which craters Stig). 4.7 will work for the moment, but we'll be adopting some C++11 features it doesn't short in the near future.
+* gcc-4.8.2 or above (4.8.0 has a nasty bug which craters Stig). 4.7 will work for the moment, but we'll be adopting some C++11 features which 4.7 doesn't support in the near future. So it's best you just start out with a more modern version of the compiler.
 
 Shortly Stig will be switching from gcc to clang+LLVM 3.4, but at this moment compiling with clang is not yet supported.
 
