@@ -3,8 +3,11 @@
 ## Quick Start
 
 ```
-git clone http://github.com/stigdb/stigdb.git ./src
+(install prerequisites for your platform per below)
+cd ~
+git clone git://github.com/stigdb/stigdb.git ./src
 cd src
+export PATH=${PATH}:${HOME}/src/tools
 chmod +x bootstrap.sh
 make
 make test
@@ -71,7 +74,7 @@ Currently the build system requires that the Stig source code be located in a di
 The Stig source code is located in the [stigdb](http://github.com/stigdb/stigdb) repository on Github. To clone the repository:
 
 ```
-git clone http://github.com/stigdb/stigdb.git ./src
+git clone git://github.com/stigdb/stigdb.git ./src
 ```
 
 Naturally, adjust the destination path above accordingly for your needs. Just be sure the code ends up in a directory named `src`.
