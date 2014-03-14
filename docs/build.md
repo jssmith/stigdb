@@ -121,6 +121,12 @@ TBD
 
 ## Troubleshooting
 
+If the build ever fails, please run the following before trying again:
+
+```
+make clean
+```
+
 TBD as problems arise.
 
 ## gcc compile tips
