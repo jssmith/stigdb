@@ -114,6 +114,8 @@ make tools/starsha
 make apps
 ```
 
+**NOTA BENE**: The `starsha` build tool is designed to compile Stig as quickly as possible. In order to do this, it grabs as many system resources as it can. This means that running starsha _will peg your machine_. The build will finish quickly, but in the duration you may find that other applications will not be very responsive.
+
 ### make test
 
 Builds and then runs the Stig unit test suite.
