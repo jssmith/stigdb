@@ -23,6 +23,8 @@
 
 ## Quick Start
 
+The below will build stig in _debug_ mode:
+
 ```
 (install prerequisites for your platform per below)
 cd ~
@@ -33,6 +35,8 @@ chmod +x bootstrap.sh
 make
 make test
 ```
+
+To build stig in _release_ mode, simply replace the `make` line above with `make release`.
 
 ## Supported Platforms
 
