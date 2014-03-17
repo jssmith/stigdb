@@ -184,6 +184,23 @@ stig/indy/disk/util/stig_dm.o:
 make: *** [release] Error 1
 ```
 
+### warning: call to '__poll_chk_warn' declared with attribute warning
+
+This error can occur during a `make release`. It is due to using an old version of gcc.
+
+To resolve: Please upgrade to gcc 4.8.2 or newer.
+
+Exmple of this error:
+
+```
+stig/core_import.o: 
+/usr/include/x86_64-linux-gnu/bits/poll2.h: In member function 'IoMain':
+/usr/include/x86_64-linux-gnu/bits/poll2.h:41:60: warning: call to '__poll_chk_warn' declared with attribute warning: poll called with fds buffer too small file nfds entries [enabled by default]
+  return __poll_chk (__fds, __nfds, __timeout, __bos (__fds));
+                                                            ^
+make: *** [release] Error 1
+```
+
 ## gcc compile tips
 
 gcc can be a real bear to compile, but if your Linux distribution does not have a package available for a gcc version higher than 4.8.1, you'll need to compile it from source.
