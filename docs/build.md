@@ -55,7 +55,7 @@ Because of the specialized nature of its storage requirements, Stig must maintai
 
 While this step is not required for building the Stig binaries, it may be something you'd prefer to do prior to installing any other required software.
 
-Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is _TBD_.
+Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is 1GB. 
 
 **WARNING!** Stig will overwrite and destroy any data which exists in this partition. Please do not re-use a partition which contains information you'd like to retain.
 
@@ -163,17 +163,47 @@ TBD
 
 ## Troubleshooting
 
+### make clean
+
 If the build ever fails, please run the following before trying again:
 
 ```
 make clean
 ```
+### warning: memset used with constant zero length parameter
 
-TBD as problems arise.
+This error can occur during a `make release`. It is due to using an old version of gcc. 
+
+To resolve: Please upgrade to gcc 4.8.2 or newer.
+
+Example of this error:
+
+```
+stig/indy/disk/util/stig_dm.o:
+../out/release/stig/indy/disk/util/volume_manager.o (symbol from plugin): warning: memset used with constant zero length parameter; this could be due to transposed parameters
+make: *** [release] Error 1
+```
+
+### warning: call to '__poll_chk_warn' declared with attribute warning
+
+This error can occur during a `make release`. It is due to using an old version of gcc.
+
+To resolve: Please upgrade to gcc 4.8.2 or newer.
+
+Exmple of this error:
+
+```
+stig/core_import.o: 
+/usr/include/x86_64-linux-gnu/bits/poll2.h: In member function 'IoMain':
+/usr/include/x86_64-linux-gnu/bits/poll2.h:41:60: warning: call to '__poll_chk_warn' declared with attribute warning: poll called with fds buffer too small file nfds entries [enabled by default]
+  return __poll_chk (__fds, __nfds, __timeout, __bos (__fds));
+                                                            ^
+make: *** [release] Error 1
+```
 
 ## gcc compile tips
 
-gcc can be a real bear to compile, but if your Linux distribution does not have a package available for a gcc version higher than 4.8.0, you'll need to compile it from source.
+gcc can be a real bear to compile, but if your Linux distribution does not have a package available for a gcc version higher than 4.8.1, you'll need to compile it from source.
 
 The [gcc installation docs](http://gcc.gnu.org/install/index.html) and [wiki](http://gcc.gnu.org/wiki/InstallingGCC) have a lot of good information on how to do this compile and installation from source. However, we've a few additional tips which may make the process go a little more smoothly:
 
