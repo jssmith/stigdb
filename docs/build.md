@@ -26,6 +26,7 @@
 The below will build stig in _debug_ mode:
 
 ```
+(create a separate stig partition)
 (install prerequisites for your platform per below)
 cd ~
 git clone git://github.com/stigdb/stigdb.git ./src
@@ -47,6 +48,16 @@ The versions on which it is known to build and run:
 * [Ubuntu 13.10](http://releases.ubuntu.com/13.10/)
 * [CentOS 6.4](http://isoredirect.centos.org/centos/6/isos/x86_64/)
 * [Arch Linux](https://www.archlinux.org)
+
+## Create a new partition/volume
+
+Because of the specialized nature of its storage requirements, Stig must maintain its database files in a separate partition/volume.
+
+While this step is not required for building the Stig binaries, it may be something you'd prefer to do prior to installing any other required software.
+
+Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is _TBD_.
+
+**WARNING!** Stig will overwrite and destroy any data which exists in this partition. Please do not re-use a partition which contains information you'd like to retain.
 
 ## Pre-Requisites
 
