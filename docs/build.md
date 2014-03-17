@@ -57,6 +57,8 @@ While this step is not required for building the Stig binaries, it may be someth
 
 Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is _TBD_.
 
+**WARNING!** Stig will overwrite and destroy any data which exists in this partition. Please do not re-use a partition which contains information you'd like to retain.
+
 ## Pre-Requisites
 
 There are several prerequisites which must be installed for a successful build of Stig:
