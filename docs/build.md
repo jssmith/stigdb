@@ -163,13 +163,26 @@ TBD
 
 ## Troubleshooting
 
+### make clean
+
 If the build ever fails, please run the following before trying again:
 
 ```
 make clean
 ```
+### warning: memset used with constant zero length parameter
 
-TBD as problems arise.
+This error can occur during a `make release`. It is due to using an old version of gcc. 
+
+To resolve: Please upgrade to gcc 4.8.2 or newer.
+
+Example of this error:
+
+```
+stig/indy/disk/util/stig_dm.o:
+../out/release/stig/indy/disk/util/volume_manager.o (symbol from plugin): warning: memset used with constant zero length parameter; this could be due to transposed parameters
+make: *** [release] Error 1
+```
 
 ## gcc compile tips
 
