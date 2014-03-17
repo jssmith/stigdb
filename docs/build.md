@@ -173,7 +173,7 @@ TBD as problems arise.
 
 ## gcc compile tips
 
-gcc can be a real bear to compile, but if your Linux distribution does not have a package available for a gcc version higher than 4.8.0, you'll need to compile it from source.
+gcc can be a real bear to compile, but if your Linux distribution does not have a package available for a gcc version higher than 4.8.1, you'll need to compile it from source.
 
 The [gcc installation docs](http://gcc.gnu.org/install/index.html) and [wiki](http://gcc.gnu.org/wiki/InstallingGCC) have a lot of good information on how to do this compile and installation from source. However, we've a few additional tips which may make the process go a little more smoothly:
 
