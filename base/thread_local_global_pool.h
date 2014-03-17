@@ -22,8 +22,10 @@
 #include <stdexcept>
 #include <vector>
 
+#include <sys/mman.h>
 #include <syslog.h>
 
+#include <base/assert_true.h>
 #include <base/likely.h>
 #include <base/no_copy_semantics.h>
 #include <base/spin_lock.h>
@@ -74,7 +76,7 @@ namespace Base {
 
       /* TODO */
       TThreadLocalPool(TThreadLocalGlobalPoolManager *manager)
-          : FreeQueue(nullptr), AvailableQueue(nullptr), Manager(manager), ManagerMembership(this, &manager->PoolCollection) {
+          : FreeQueue(nullptr), AvailableQueue(nullptr), Manager(manager), ManagerMembership(this, &Base::AssertTrue(manager)->PoolCollection) {
         assert(manager);
       }
 
@@ -220,6 +222,7 @@ namespace Base {
     TThreadLocalGlobalPoolManager(size_t num_elems, const TArgs &... args)
         : NumElems(num_elems), Alloc(nullptr), PoolCollection(this) {
       Alloc = reinterpret_cast<TObj *>(malloc(sizeof(TObj) * num_elems));
+      Base::IfLt0(mlock(Alloc, sizeof(TObj) * num_elems));
       if (unlikely(!Alloc)) {
         throw std::bad_alloc();
       }

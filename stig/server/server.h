@@ -277,6 +277,12 @@ namespace Stig {
         /* TODO */
         std::vector<size_t> DiskMergeCoreVec;
 
+        /* TODO */
+        size_t NumFiberFrames;
+
+        /* TODO */
+        size_t NumDiskEvents;
+
         /* The port on which we respond to HTTP by giving a status report. */
         in_port_t ReportingPortNumber;
 
@@ -532,7 +538,7 @@ namespace Stig {
 
           private:
 
-          Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalRegisteredPool *FramePool;
+          Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalPool *FramePool;
 
           Indy::Fiber::TFrame *Frame;
 
@@ -617,7 +623,7 @@ namespace Stig {
         TServer *Server;
 
         /* TODO */
-        Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalRegisteredPool *FramePool;
+        Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalPool *FramePool;
         Indy::Fiber::TFrame *Frame;
 
         /* TODO */
