@@ -66,6 +66,7 @@ There are several prerequisites which must be installed for a successful build o
 ### Compiler
 
 * gcc-4.8.2 or above (4.8.0 has a nasty bug which craters Stig and 4.8.1 has several bugs in its handling of c++11). 4.7 will work for the moment, but we'll be adopting some C++11 features which 4.7 doesn't support in the near future. So it's best you just start out with a more modern version of the compiler.
+    * The preferred method of installing gcc-4.8.2 is to use [a pre-compiled binary](https://launchpad.net/~ubuntu-toolchain-r/+archive/test?field.series_filter=saucy). If that does not work or is not available for your Linux distribution, please see the [gcc compile tips](#gcc-compile-tips) below.
 
 Shortly Stig will be switching from gcc to clang+LLVM 3.4, but at this moment compiling with clang is not yet supported.
 
