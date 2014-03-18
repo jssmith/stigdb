@@ -1,15 +1,13 @@
-/* <stig/spa/spa.cc> 
+/* <stig/spa/spa.cc>
 
-   TODO
+   Copyright 2010-2014 Stig LLC
 
-   Copyright 2010-2014 Tagged
-   
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +34,7 @@
 #include <base/dir_iter.h>
 #include <base/os_error.h>
 #include <base/zero.h>
-#include <stig/honcho.h>
+#include <stig/spa/honcho.h>
 #include <stig/spa/flux_capacitor/api.h>
 #include <stig/spa/service.h>
 #include <stig/spa/stig_args.h>
@@ -271,8 +269,8 @@ class TSpa : public Mongoose::TMongoose {
         assert(&strm);
         strm << "Build: Unknown" << endl // FIXME: Use Version from SCM to tag.
              << endl
-             << "Copyright 2010-2012 Tagged, Inc." << endl;
-
+             << "Copyright Stig LLC" << endl
+             << "Licensed under the Apache License, Version 2.0" << endl;
       }
     };
     public:

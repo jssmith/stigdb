@@ -1,15 +1,15 @@
-/* <stig/indy/manager_base.cc> 
+/* <stig/indy/manager_base.cc>
 
    Implements <stig/indy/manager_base.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -202,7 +202,6 @@ TManager::TManager(Disk::Util::TEngine *engine,
                    Base::TScheduler *scheduler,
                    size_t block_slots_available_per_merger,
                    size_t max_repo_cache_size,
-                   size_t walker_local_cache_size,
                    size_t temp_file_consol_thresh,
                    const std::vector<size_t> &merge_mem_cores,
                    const std::vector<size_t> &merge_disk_cores,
@@ -220,7 +219,6 @@ TManager::TManager(Disk::Util::TEngine *engine,
       BlockSlotsAvailablePerMerger(block_slots_available_per_merger),
       MaxCacheSize(max_repo_cache_size),
       Engine(engine),
-      WalkerLocalCacheSize(walker_local_cache_size),
       TempFileConsolThresh(temp_file_consol_thresh),
       MergeMemCores(merge_mem_cores),
       MergeDiskCores(merge_disk_cores),
@@ -282,7 +280,7 @@ void TManager::RunLayerCleaner() {
   if (Engine->IsDiskBased()) {
     /* if this is a disk based engine, allocate event pools */
     assert(!Disk::Util::TDiskController::TEvent::LocalEventPool);
-    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalRegisteredPool(&Disk::Util::TDiskController::TEvent::DiskEventPoolManager, 1000UL);
+    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalGlobalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalPool(Disk::Util::TDiskController::TEvent::DiskEventPoolManager.get());
   }
   for (;;) {
     LayerCleanerTimer.Pop();
@@ -302,7 +300,7 @@ void TManager::RunMergeMem() {
   if (Engine->IsDiskBased()) {
     /* if this is a disk based engine, allocate event pools */
     assert(!Disk::Util::TDiskController::TEvent::LocalEventPool);
-    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalRegisteredPool(&Disk::Util::TDiskController::TEvent::DiskEventPoolManager, 10000UL);
+    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalGlobalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalPool(Disk::Util::TDiskController::TEvent::DiskEventPoolManager.get());
   }
   int timeout = -1;
   Base::TTime deadline;
@@ -381,7 +379,7 @@ void TManager::RunMergeDisk() {
   if (Engine->IsDiskBased()) {
     /* if this is a disk based engine, allocate event pools */
     assert(!Disk::Util::TDiskController::TEvent::LocalEventPool);
-    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalRegisteredPool(&Disk::Util::TDiskController::TEvent::DiskEventPoolManager, 10000UL);
+    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalGlobalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalPool(Disk::Util::TDiskController::TEvent::DiskEventPoolManager.get());
   }
   int timeout = -1;
   Base::TTime deadline;

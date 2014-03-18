@@ -1,15 +1,15 @@
-/* <stig/server/server.h> 
+/* <stig/server/server.h>
 
    The Stig server.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,6 @@
 #include <netinet/in.h>
 
 #include <base/debug_log.h>
-#include <base/epoll.h>
 #include <base/fd.h>
 #include <base/log.h>
 #include <base/no_copy_semantics.h>
@@ -179,6 +178,9 @@ namespace Stig {
         /* The port on which TServer::MainSocket listens for clients. */
         in_port_t PortNumber;
 
+        /* The port on which TServer::MemcacheSocket listens for clients. */
+        in_port_t MemcachePortNumber;
+
         /* The port on which TServer::WaitForSlave listens for a slave. */
         in_port_t SlavePortNumber;
 
@@ -222,13 +224,7 @@ namespace Stig {
         size_t FileServiceAppendLogMB;
 
         /* TODO */
-        size_t DiskQueueDepth;
-
-        /* TODO */
         size_t DiskMaxAioNum;
-
-        /* TODO */
-        size_t MinDiscardBlockConsideration;
 
         /* TODO */
         double HighDiskUtilizationThreshold;
@@ -258,9 +254,6 @@ namespace Stig {
         std::string StartingState;
 
         /* TODO */
-        size_t NumDiskWorkerThreads;
-
-        /* TODO */
         size_t NumMemMergeThreads;
 
         /* TODO */
@@ -268,9 +261,6 @@ namespace Stig {
 
         /* TODO */
         size_t MaxRepoCacheSize;
-
-        /* TODO */
-        size_t WalkerLocalCacheSize;
 
         /* TODO */
         std::vector<size_t> FastCoreVec;
@@ -286,6 +276,12 @@ namespace Stig {
 
         /* TODO */
         std::vector<size_t> DiskMergeCoreVec;
+
+        /* TODO */
+        size_t NumFiberFrames;
+
+        /* TODO */
+        size_t NumDiskEvents;
 
         /* The port on which we respond to HTTP by giving a status report. */
         in_port_t ReportingPortNumber;
@@ -317,8 +313,6 @@ namespace Stig {
         /* TODO */
         size_t RepoMappingPoolSize;
         size_t RepoMappingEntryPoolSize;
-        size_t WeakRepoPoolSize;
-        size_t StrongRepoPoolSize;
         size_t RepoDataLayerPoolSize;
 
         /* TODO */
@@ -544,7 +538,7 @@ namespace Stig {
 
           private:
 
-          Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalRegisteredPool *FramePool;
+          Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalPool *FramePool;
 
           Indy::Fiber::TFrame *Frame;
 
@@ -592,14 +586,15 @@ namespace Stig {
         public:
 
         /* TODO */
-        TServeClientRunnable(TServer *server, Indy::Fiber::TRunner *runner, Base::TFd &&fd, const Socket::TAddress &client_address)
+        TServeClientRunnable(TServer *server, Indy::Fiber::TRunner *runner, Base::TFd &&fd, const Socket::TAddress &client_address, bool is_memcache)
             : Server(server),
               Fd(fd),
-              ClientAddress(client_address) {
+              ClientAddress(client_address),
+              IsMemcache(is_memcache) {
           FramePool = Indy::Fiber::TFrame::LocalFramePool;
           Frame = FramePool->Alloc();
           try {
-            Frame->Latch(runner, this, static_cast<Indy::Fiber::TRunnable::TFunc>(&TServeClientRunnable::Serve));
+              Frame->Latch(runner, this, static_cast<Indy::Fiber::TRunnable::TFunc>(&TServeClientRunnable::Serve));
           } catch (...) {
             FramePool->Free(Frame);
             throw;
@@ -614,6 +609,9 @@ namespace Stig {
         /* TODO */
         void Serve() {
           assert(this);
+          if(IsMemcache) {
+            Server->ServeMemcacheClient(Fd, ClientAddress);
+          }
           Server->ServeClient(Fd, ClientAddress);
           Indy::Fiber::FreeMyFrame(FramePool);
           delete this;
@@ -625,7 +623,7 @@ namespace Stig {
         TServer *Server;
 
         /* TODO */
-        Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalRegisteredPool *FramePool;
+        Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalPool *FramePool;
         Indy::Fiber::TFrame *Frame;
 
         /* TODO */
@@ -634,10 +632,12 @@ namespace Stig {
         /* TODO */
         const Socket::TAddress ClientAddress;
 
+        bool IsMemcache;
+
       };  // TServeClientRunnable
 
       /* Accepts connections from clients on our main socket.  Launched as a thread by the constructor. */
-      void AcceptClientConnections();
+      void AcceptClientConnections(bool is_memcache);
 
       /* See <stig/protocol.h>. */
       void BeginImport();
@@ -665,6 +665,9 @@ namespace Stig {
 
       /* Serves a client on the given fd.  Launched as a thread by AcceptClientConnections() when a client connects. */
       void ServeClient(Base::TFd &fd, const Socket::TAddress &client_address);
+
+      /* Serves a client which speaks the memcached protocol. */
+      void ServeMemcacheClient(Base::TFd &fd, const Socket::TAddress &client_address);
 
       /* TODO */
       void StateChangeCb(Stig::Indy::TManager::TState state);
@@ -737,6 +740,9 @@ namespace Stig {
       /* The socket on which AcceptClientConnections() listens. */
       Base::TFd MainSocket;
 
+      /* The socket on which we listen for memcached clients. */
+      Base::TFd MemcacheSocket;
+
       /* Covers ConnectionBySessionId. */
       std::mutex ConnectionMutex;
 
@@ -765,4 +771,3 @@ namespace Stig {
   }  // Server
 
 }  // Stig
-

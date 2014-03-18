@@ -1,15 +1,15 @@
-/* <stig/indy/fiber/fiber.test.cc> 
+/* <stig/indy/fiber/fiber.test.cc>
 
    Unit test for <stig/indy/fiber/fiber.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,8 +94,8 @@ FIXTURE(CoIterate) {
   const size_t stack_size = 8 * 1024 * 1024;
   TRunner::TRunnerCons runner_cons(1);
   TRunner runner(runner_cons);
-  TThreadLocalPoolManager<TFrame, size_t, TRunner *> frame_pool_manager;
-  TFrame::LocalFramePool = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool(&frame_pool_manager, num_frames, stack_size, &runner);
+  TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *> frame_pool_manager(num_frames, stack_size, &runner);
+  TFrame::LocalFramePool = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool(&frame_pool_manager);
   try {
     auto launch_fiber_sched = [&]() {
       runner.Run();
@@ -229,16 +229,15 @@ class TSpawnRunnable
 };
 
 FIXTURE(SpawnAndSync) {
-  const size_t num_frames = 1UL;
+  const size_t num_frames = 11UL;
   const size_t stack_size = 8 * 1024 * 1024;
   TRunner::TRunnerCons runner_cons(1UL);
   TRunner runner(runner_cons);
-  TThreadLocalPoolManager<TFrame, size_t, TRunner *> frame_pool_manager;
-  TFrame::LocalFramePool = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool(&frame_pool_manager, num_frames, stack_size, &runner);
+  TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *> frame_pool_manager(num_frames, stack_size, &runner);
+  TFrame::LocalFramePool = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool(&frame_pool_manager);
   try {
     auto launch_fiber_sched = [&]() {
-      const size_t sched_num_frames = 10UL;
-      TFrame::LocalFramePool = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool(&frame_pool_manager, sched_num_frames, stack_size, &runner);
+      TFrame::LocalFramePool = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool(&frame_pool_manager);
       try {
         runner.Run();
       } catch (...) {
@@ -309,8 +308,8 @@ FIXTURE(CatchLeakedFrame) {
   const size_t stack_size = 8 * 1024 * 1024;
   TRunner::TRunnerCons runner_cons(1);
   TRunner runner(runner_cons);
-  TThreadLocalPoolManager<TFrame, size_t, TRunner *> *frame_pool_manager = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>();
-  TFrame::LocalFramePool = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool(frame_pool_manager, num_frames, stack_size, &runner);
+  TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *> *frame_pool_manager = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>(num_frames, stack_size, &runner);
+  TFrame::LocalFramePool = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool(frame_pool_manager);
   bool caught_expected_exception = false;
   try {
     auto launch_fiber_sched = [&]() {
@@ -382,9 +381,9 @@ FIXTURE(SwitchRunnerToRunnerRAII) {
   bool did_run = false;
   TRunner runner_1(runner_cons);
   TRunner runner_2(runner_cons);
-  TThreadLocalPoolManager<TFrame, size_t, TRunner *> *frame_pool_manager = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>();
+  TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *> *frame_pool_manager = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>(num_frames, stack_size, &runner_1);
   try {
-    TFrame::LocalFramePool = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool(frame_pool_manager, num_frames, stack_size, &runner_1);
+    TFrame::LocalFramePool = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool(frame_pool_manager);
     auto launch_fiber_sched = [&](TRunner *runner) {
       runner->Run();
     };
@@ -413,16 +412,16 @@ class TActorRunnable
   public:
 
   TActorRunnable(TRunner *runner,
-                   TSingleSem &my_push_sem, 
-                   TSingleSem &my_pop_sem, 
-                   std::atomic<size_t> &pos_counter, 
+                   TSingleSem &my_push_sem,
+                   TSingleSem &my_pop_sem,
+                   std::atomic<size_t> &pos_counter,
                    std::atomic<size_t> &accuracy_counter,
                    std::mutex &mut,
                    std::condition_variable &cond,
-                   size_t &finish_count) 
-    : MyPushSem(my_push_sem), 
-      MyPopSem(my_pop_sem), 
-      PosCounter(pos_counter), 
+                   size_t &finish_count)
+    : MyPushSem(my_push_sem),
+      MyPopSem(my_pop_sem),
+      PosCounter(pos_counter),
       AccuracyCounter(accuracy_counter),
       Mut(mut),
       Cond(cond),
@@ -478,16 +477,16 @@ class TTriggerRunnable
   public:
 
   TTriggerRunnable(TRunner *runner,
-                   TSingleSem &my_push_sem, 
-                   TSingleSem &my_pop_sem, 
-                   std::atomic<size_t> &pos_counter, 
+                   TSingleSem &my_push_sem,
+                   TSingleSem &my_pop_sem,
+                   std::atomic<size_t> &pos_counter,
                    std::atomic<size_t> &accuracy_counter,
                    std::mutex &mut,
                    std::condition_variable &cond,
-                   size_t &finish_count) 
-    : MyPushSem(my_push_sem), 
-      MyPopSem(my_pop_sem), 
-      PosCounter(pos_counter), 
+                   size_t &finish_count)
+    : MyPushSem(my_push_sem),
+      MyPopSem(my_pop_sem),
+      PosCounter(pos_counter),
       AccuracyCounter(accuracy_counter),
       Mut(mut),
       Cond(cond),
@@ -548,9 +547,9 @@ FIXTURE(Sem) {
   TRunner runner_2(runner_cons);
   std::atomic<size_t> pos_counter(0UL);
   std::atomic<size_t> accuracy_counter(0UL);
-  TThreadLocalPoolManager<TFrame, size_t, TRunner *> *frame_pool_manager = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>();
+  TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *> *frame_pool_manager = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>(num_frames, stack_size, &runner_1);
   try {
-    TFrame::LocalFramePool = new TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool(frame_pool_manager, num_frames, stack_size, &runner_1);
+    TFrame::LocalFramePool = new TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool(frame_pool_manager);
     auto launch_fiber_sched = [&](TRunner *runner) {
       runner->Run();
     };

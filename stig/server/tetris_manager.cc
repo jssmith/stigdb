@@ -1,15 +1,15 @@
-/* <stig/server/tetris_manager.cc> 
+/* <stig/server/tetris_manager.cc>
 
    Implements <stig/server/tetris_manager.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -254,16 +254,16 @@ void TTetrisManager::TPlayer::BecomeMaster() {
 
 TTetrisManager::TTetrisManager(Base::TScheduler *scheduler,
                                Stig::Indy::Fiber::TRunner::TRunnerCons &runner_cons,
-                               Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager,
+                               Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager,
                                const std::function<void (Indy::Fiber::TRunner *)> &runner_setup_cb,
                                bool is_master)
     : Scheduler(scheduler), FiberScheduler(runner_cons), IsMaster(is_master) {
   assert(scheduler);
   Base::TEventSemaphore setup_is_complete;
-  auto launch_sched = [this, runner_setup_cb, &setup_is_complete](Fiber::TRunner *runner, 
-                                                                  Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager) {
+  auto launch_sched = [this, runner_setup_cb, &setup_is_complete](Fiber::TRunner *runner,
+                                                                  Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager) {
     if (!Fiber::TFrame::LocalFramePool) {
-      Fiber::TFrame::LocalFramePool = new Base::TThreadLocalPoolManager<Fiber::TFrame, size_t, Fiber::TRunner *>::TThreadLocalRegisteredPool(frame_pool_manager, 1UL, 8 * 1024 * 1024, runner);
+      Fiber::TFrame::LocalFramePool = new Base::TThreadLocalGlobalPoolManager<Fiber::TFrame, size_t, Fiber::TRunner *>::TThreadLocalPool(frame_pool_manager);
       FramePool = Fiber::TFrame::LocalFramePool;
     }
     runner_setup_cb(runner);

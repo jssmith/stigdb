@@ -1,13 +1,13 @@
-/* <stig/indy/fiber/fiber.h> 
+/* <stig/indy/fiber/fiber.h>
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,23 +18,28 @@
 
 #include <atomic>
 #include <cassert>
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <stdexcept>
-
-#include <base/spin_lock.h>
+#include <thread>
 #include <unordered_set>
+
 
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/mman.h>
 #include <syslog.h>
 #include <ucontext.h>
 
 #include <base/assert_true.h>
+#include <base/error_utils.h>
 #include <base/likely.h>
 #include <base/no_copy_semantics.h>
-#include <base/thread_local_registered_pool.h>
+#include <base/spin_lock.h>
+#include <base/thread_local_global_pool.h>
+#include <base/zero.h>
 #include <inv_con/unordered_list.h>
 
 namespace Stig {
@@ -76,6 +81,7 @@ namespace Stig {
       inline void create_fiber(fiber_t &fib, void(*ufnc)(void *), void *uctx, size_t stack_size) {
         getcontext(&fib.fib);
         fib.fib.uc_stack.ss_sp = malloc(stack_size);
+        Base::IfLt0(mlock(fib.fib.uc_stack.ss_sp, stack_size));
         //printf("ss_sp=[%p], [%p]\n", fib.fib.uc_stack.ss_sp, reinterpret_cast<uint8_t *>(fib.fib.uc_stack.ss_sp) + stack_size);
         fib.fib.uc_stack.ss_size = stack_size;
         fib.fib.uc_link = 0;
@@ -83,6 +89,18 @@ namespace Stig {
         fiber_ctx_t ctx = {ufnc, uctx, &fib.jmp, &tmp};
         makecontext(&fib.fib, reinterpret_cast<void(*)()>(fiber_start_fnc), 1, &ctx);
         swapcontext(&tmp, &fib.fib);
+      }
+
+      /* TODO */
+      inline size_t get_stack_size(fiber_t &fib) {
+        return fib.fib.uc_stack.ss_size;
+      }
+
+      /* TODO */
+      inline void free_fiber(fiber_t &fib) {
+        assert(&fib);
+        assert(fib.fib.uc_stack.ss_sp);
+        free(fib.fib.uc_stack.ss_sp);
       }
 
       /* TODO */
@@ -104,6 +122,18 @@ namespace Stig {
         fib.uc_stack.ss_size = stack_size;
         fib.uc_link = 0;
         makecontext(&fib, reinterpret_cast<void (*)()>(ufnc), 1, uctx);
+      }
+
+      /* TODO */
+      inline size_t get_stack_size(fiber_t &fib) {
+        return fib.uc_stack.ss_size;
+      }
+
+      /* TODO */
+      inline void free_fiber(fiber_t &fib) {
+        assert(&fib);
+        assert(fib.uc_stack.ss_sp);
+        free(fib.uc_stack.ss_sp);
       }
 
       /* TODO */
@@ -143,7 +173,7 @@ namespace Stig {
           /* TODO */
           ~TRunnerCons() {
             assert(this);
-            delete RunnerArray;
+            delete[] RunnerArray;
           }
 
           private:
@@ -194,9 +224,9 @@ namespace Stig {
               RunnerArray(runner_array) {
           assert(runner_id < total_num_runners);
           #ifdef FAST_SWITCH
-          memset(&MainFiber.fib, 0, sizeof(MainFiber.fib));
+          Base::Zero(MainFiber.fib);
           #else
-          memset(&MainFiber, 0, sizeof(MainFiber));
+          Base::Zero(MainFiber);
           #endif
           QueueArray = new TOutboundQueue[total_num_runners];
           for (size_t i = 0; i < total_num_runners; ++i) {
@@ -205,7 +235,11 @@ namespace Stig {
         }
 
         /* TODO */
-        ~TRunner() {}
+        ~TRunner() {
+          assert(this);
+          RunnerArray[RunnerId] = nullptr;
+          delete[] QueueArray;
+        }
 
         /* TODO */
         void Run();
@@ -239,7 +273,7 @@ namespace Stig {
 
         /* TODO */
         TFrame *FreeFrame;
-        Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalRegisteredPool *FreeFramePool;
+        Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalPool *FreeFramePool;
 
         private:
 
@@ -297,16 +331,63 @@ namespace Stig {
 
       };  // TRunnable
 
+      /* TODO */
+      class __attribute__((aligned(64))) TRunnerPool {
+        NO_COPY_SEMANTICS(TRunnerPool);
+        public:
+
+        /* TODO */
+        TRunnerPool(TRunner::TRunnerCons &runner_cons,
+                    size_t num_worker)
+            : WorkerCount(num_worker), AssignPos(0UL) {
+          for (size_t i = 0; i < num_worker; ++i) {
+            RunnerVec.emplace_back(new TRunner(runner_cons));
+            ThreadVec.emplace_back(new std::thread(std::bind([](TRunner *runner) {
+              runner->Run();
+            }, RunnerVec.back().get())));
+          }
+        }
+
+        /* TODO */
+        ~TRunnerPool() {
+          for (auto &runner : RunnerVec) {
+            runner->ShutDown();
+          }
+          for (auto &t : ThreadVec) {
+            t->join();
+          }
+        }
+
+        /* TODO */
+        inline size_t GetWorkerCount() const {
+          assert(this);
+          return WorkerCount;
+        }
+
+        /* TODO */
+        inline void Schedule(TFrame *frame, TRunnable *runnable, const TRunnable::TFunc &func);
+
+        private:
+
+        /* TODO */
+        const size_t WorkerCount;
+
+        /* TODO: use better data structure */
+        std::vector<std::unique_ptr<TRunner>> RunnerVec;
+        std::vector<std::unique_ptr<std::thread>> ThreadVec;
+
+        /* TODO: we can do runner assignment more effectively than iterating through the vector */
+        std::atomic<size_t> AssignPos;
+
+      };  // TRunnerPool
+
       static void StartFrame(void *void_frame);
 
       /* TODO */
       class TFrame
-          : public Base::TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TObjBase {
+          : public Base::TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TObjBase {
         NO_COPY_SEMANTICS(TFrame);
         public:
-
-        /* TODO */
-        //typedef InvCon::UnorderedList::TMembership<TFrame, TRunner> TQueueMembership;
 
         /* TODO */
         TFrame(size_t stack_size, TRunner */*runner*/)
@@ -320,7 +401,6 @@ namespace Stig {
               InboundQueueNextFrame(nullptr),
               ComeBackRightAway(false) {
           create_fiber(MyFiber, StartFrame, this, stack_size);
-          //runner->ScheduleFrame(this);
         }
 
         virtual ~TFrame() {
@@ -328,6 +408,7 @@ namespace Stig {
           CheckFrameUnwound();
           assert(Runnable == nullptr);
           assert(RunnableFunc == nullptr);
+          free_fiber(MyFiber);
         }
 
         /* TODO */
@@ -404,7 +485,7 @@ namespace Stig {
               ((*runnable).*runnable_func)();
             } catch (const std::exception &ex) {
               syslog(LOG_EMERG, "FATAL ERROR: Fiber Runner caught exception. These must be handled within the fiber.");
-              abort();
+              //abort();
             }
             #ifndef NDEBUG
             DebugIsRunning = false;
@@ -434,7 +515,7 @@ namespace Stig {
         /* TODO */
         static __thread TFrame *LocalFrame;
 
-        static __thread Base::TThreadLocalPoolManager<Fiber::TFrame, size_t, Fiber::TRunner *>::TThreadLocalRegisteredPool *LocalFramePool;
+        static __thread Base::TThreadLocalGlobalPoolManager<Fiber::TFrame, size_t, Fiber::TRunner *>::TThreadLocalPool *LocalFramePool;
 
         private:
 
@@ -735,6 +816,12 @@ namespace Stig {
         *** Inline ***
         *************/
 
+      inline void TRunnerPool::Schedule(TFrame *frame, TRunnable *runnable, const TRunnable::TFunc &func) {
+        size_t prev_assignment_count = std::atomic_fetch_add(&AssignPos, 1UL);
+        TRunner *const chosen_runner = RunnerVec[prev_assignment_count % WorkerCount].get();
+        frame->Latch(chosen_runner, runnable, func);
+      }
+
       static inline void Yield() {
         assert(TFrame::LocalFrame);
         TFrame::LocalFrame->Yield();
@@ -756,7 +843,7 @@ namespace Stig {
         TFrame::LocalFrame->SwitchTo(runner);
       }
 
-      static inline void FreeMyFrame(Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalRegisteredPool *pool) {
+      static inline void FreeMyFrame(Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>::TThreadLocalPool *pool) {
         assert(TFrame::LocalFrame);
         assert(TRunner::LocalRunner);
         TRunner::LocalRunner->FreeFrame = TFrame::LocalFrame;
@@ -959,9 +1046,9 @@ namespace Stig {
 
       /* We use this as a lambda to pass to a thread that is going run a fiber scheduler with just 1 task assigned. This is temporary till we convert
          some background threads to properly fiber schedule... */
-      static inline void LaunchSlowFiberSched(TRunner *runner, Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager) {
+      static inline void LaunchSlowFiberSched(TRunner *runner, Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager) {
         if (!Fiber::TFrame::LocalFramePool) {
-          Fiber::TFrame::LocalFramePool = new Base::TThreadLocalPoolManager<Fiber::TFrame, size_t, Fiber::TRunner *>::TThreadLocalRegisteredPool(frame_pool_manager, 1UL, 8 * 1024 * 1024, runner);
+          Fiber::TFrame::LocalFramePool = new Base::TThreadLocalGlobalPoolManager<Fiber::TFrame, size_t, Fiber::TRunner *>::TThreadLocalPool(frame_pool_manager);
         }
         runner->Run();
         if (Fiber::TFrame::LocalFramePool) {
@@ -975,4 +1062,3 @@ namespace Stig {
   }  // Indy
 
 }  // Stig
-

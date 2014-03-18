@@ -1,15 +1,15 @@
-/* <base/io_utils.h> 
+/* <base/io_utils.h>
 
    I/O utilities.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,6 +21,9 @@
 #include <stdexcept>
 
 namespace Base {
+
+  /* Returns true iff the fd is valid. */
+  bool IsValidFd(int fd);
 
   /* The 'AtMost' versions of read and write are basically just wrappers around
      the OS functions.  They will transfer as much data as possible, up to the
@@ -144,4 +147,3 @@ namespace Base {
   void SetNonBlocking(int fd);
 
 }  // Base
-

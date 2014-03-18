@@ -1,15 +1,15 @@
-/* <strm/mem/static_out.h> 
+/* <strm/mem/static_out.h>
 
    A static in-memory buffer which acts as a destination for out-flowing data.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ namespace Strm {
     /* A static in-memory buffer which acts as a destination for out-flowing
        data.  The object contains the workspace itself.  It doesn't do any
        heap allocation. */
-    template <size_t MaxSize_>
+    template <size_t MaxSize_=0x10000>
     class TStaticOut final
         : public Out::TCons {
       public:
@@ -98,9 +98,8 @@ namespace Strm {
     };  // TStaticOut<MaxSize>
 
     /* The default static output consumer holds up to 64K. */
-    using TDefStaticOut = TStaticOut<0x10000>;
+    using TStaticOutDefault = TStaticOut<>;
 
   }  // Mem
 
 }  // Strm
-

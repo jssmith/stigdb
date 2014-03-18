@@ -1,15 +1,15 @@
-/* <strm/bin/round_trip.test.cc> 
+/* <strm/bin/round_trip.test.cc>
 
    Unit test for <strm/bin/in.h> and <strm/bin/out.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,7 +62,7 @@ struct For<TElem[Size]> final {
    true iff. the value comes back intact. */
 template <typename TVal>
 static bool RoundTrip(const TVal &expected) {
-  Mem::TDefStaticOut cons;
+  Mem::TStaticOutDefault cons;
   /* extra */ {
     Bin::TOut strm(&cons);
     strm << expected;
@@ -86,7 +86,7 @@ template <
     >::type
 >
 static bool RoundTripNbo(TVal expected) {
-  Mem::TDefStaticOut cons;
+  Mem::TStaticOutDefault cons;
   /* extra */ {
     Bin::TOut strm(&cons);
     strm << Bin::Nbo(expected);
@@ -189,4 +189,3 @@ FIXTURE(Nbo) {
   EXPECT_TRUE(RoundTripNbo<uint64_t>(0));
   EXPECT_TRUE(RoundTripNbo<uint64_t>(0xFFFFFFFFFFFFFFFF));
 }
-

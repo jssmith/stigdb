@@ -1,15 +1,15 @@
-/* <stig/compiler.cc> 
+/* <stig/compiler.cc>
 
    Implements <stig/compiler.h>
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,6 @@
 #include <base/split.h>
 #include <base/source_root.h>
 #include <base/thrower.h>
-#include <base/tmp_filename.h>
 #include <stig/code_gen/package.h>
 #include <stig/stig.package.cst.h>
 #include <stig/synth/package.h>

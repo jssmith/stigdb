@@ -1,15 +1,15 @@
-/* <stig/indy/disk/durable_manager.h> 
+/* <stig/indy/disk/durable_manager.h>
 
    TODO
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -122,7 +122,7 @@ namespace Stig {
         /* TODO */
         TDurableManager(Base::TScheduler *scheduler,
                         Fiber::TRunner::TRunnerCons &runner_cons,
-                        Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager,
+                        Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager,
                         DurableManager::TManager *manager,
                         Util::TEngine *engine,
                         size_t max_cache_size,
@@ -166,8 +166,18 @@ namespace Stig {
         }
 
         /* TODO */
+        static constexpr size_t GetMappingSize() {
+          return sizeof(TMapping);
+        }
+
+        /* TODO */
         void static InitMappingEntryPool(size_t num_obj) {
           TMapping::TEntry::Pool.Init(num_obj);
+        }
+
+        /* TODO */
+        static constexpr size_t GetMappingEntrySize() {
+          return sizeof(TMapping::TEntry);
         }
 
         /* TODO */
@@ -176,8 +186,18 @@ namespace Stig {
         }
 
         /* TODO */
+        static constexpr size_t GetDurableLayerSize() {
+          return sizeof(TDurableLayer);
+        }
+
+        /* TODO */
         void static InitMemEntryPool(size_t num_obj) {
           TMemSlushLayer::TDurableEntry::Pool.Init(num_obj);
+        }
+
+        /* TODO */
+        static constexpr size_t GetMemEntrySize() {
+          return sizeof(TMemSlushLayer::TDurableEntry);
         }
 
         /* TODO */

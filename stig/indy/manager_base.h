@@ -1,13 +1,13 @@
-/* <stig/indy/manager_base.h> 
+/* <stig/indy/manager_base.h>
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -713,9 +713,6 @@ namespace Stig {
         inline Disk::Util::TEngine *GetEngine() const;
 
         /* TODO */
-        inline size_t GetWalkerLocalCacheSize() const;
-
-        /* TODO */
         inline size_t GetTempFileConsolThresh() const;
 
         /* TODO */
@@ -751,13 +748,28 @@ namespace Stig {
         }
 
         /* TODO */
+        static constexpr size_t GetMappingSize() {
+          return sizeof(TRepo::TMapping);
+        }
+
+        /* TODO */
         static void InitMappingEntryPool(size_t num_obj) {
           TRepo::TMapping::TEntry::Pool.Init(num_obj);
         }
 
         /* TODO */
+        static constexpr size_t GetMappingEntrySize() {
+          return sizeof(TRepo::TMapping::TEntry);
+        }
+
+        /* TODO */
         static void InitDataLayerPool(size_t num_obj) {
           TRepo::TDataLayer::Pool.Init(num_obj);
+        }
+
+        /* TODO */
+        static constexpr size_t GetDataLayerSize() {
+          return sizeof(TRepo::TDataLayer);
         }
 
         Base::TSigmaCalc MergeMemAverageKeysCalc;
@@ -849,7 +861,6 @@ namespace Stig {
                  Base::TScheduler *scheduler,
                  size_t block_slots_available_per_merger,
                  size_t max_repo_cache_size,
-                 size_t walker_local_cache_size,
                  size_t temp_file_consol_thresh,
                  const std::vector<size_t> &merge_mem_cores,
                  const std::vector<size_t> &merge_disk_cores,
@@ -941,9 +952,6 @@ namespace Stig {
 
         /* TODO */
         Disk::Util::TEngine *Engine;
-
-        /* TODO */
-        size_t WalkerLocalCacheSize;
 
         /* TODO */
         size_t TempFileConsolThresh;
@@ -1079,10 +1087,6 @@ namespace Stig {
 
       inline Disk::Util::TEngine *TManager::GetEngine() const {
         return Engine;
-      }
-
-      inline size_t TManager::GetWalkerLocalCacheSize() const {
-        return WalkerLocalCacheSize;
       }
 
       inline size_t TManager::GetTempFileConsolThresh() const {

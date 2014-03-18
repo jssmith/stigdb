@@ -1,15 +1,15 @@
-/* <stig/indy/context.test.broken.cc> 
+/* <stig/indy/context.test.broken.cc>
 
    Unit test for <stig/indy/context.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,7 @@
 
 #include <base/scheduler.h>
 #include <stig/compiler.h>
-#include <stig/honcho.h>
+#include <stig/spa/honcho.h>
 #include <stig/indy/disk/sim/mem_engine.h>
 #include <stig/indy/fiber/fiber_test_runner.h>
 #include <stig/server/repo_tetris_manager.h>
@@ -90,7 +90,6 @@ const bool AllowFileSync = true;
 const bool NoRealtime = true;
 const size_t BlockSlotsAvailablePerMerger = 100UL;
 const size_t MaxRepoCacheSize = 100UL;
-const size_t WalkerLocalCacheSize = 100UL;
 const size_t TempFileConsolidationThreshold = 20UL;
 
 static const char *sample_package = "package #1;"
@@ -98,9 +97,9 @@ static const char *sample_package = "package #1;"
 
 bool PrintCmds = false; /* For starsha runner */
 
-void RunTestLogic(const std::function<void (const Base::TUuid &session_id, 
-                                            const std::unique_ptr<TManager> &manager, 
-                                            const TManager::TPtr<Indy::TRepo> &global_repo, 
+void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
+                                            const std::unique_ptr<TManager> &manager,
+                                            const TManager::TPtr<Indy::TRepo> &global_repo,
                                             const TManager::TPtr<Indy::TRepo> &repo,
                                             Base::TScheduler &scheduler)> &cb) {
   Fiber::TFiberTestRunner runner([&](std::mutex &mut, std::condition_variable &cond, bool &fin, Fiber::TRunner::TRunnerCons &runner_cons) {
@@ -115,7 +114,7 @@ void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
       Disk::TLocalWalkerCache::Cache = new Disk::TLocalWalkerCache();
     }
     /* all our RAII scopes */ {
-      Stig::THoncho Honcho;
+      Stig::Spa::THoncho Honcho;
       /* try to compile the binary */
       ofstream package_file;
       package_file.open("/tmp/context.stig");
@@ -130,7 +129,7 @@ void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
       TScheduler scheduler;
       scheduler.SetPolicy(scheduler_policy);
       auto util_reporter = make_shared<Disk::TIndyUtilReporter>();
-    
+
       Stig::Indy::Disk::Sim::TMemEngine mem_engine(&scheduler,
                                                    256 /* fast disk space: 256MB */,
                                                    64 /* slow disk space: 64MB */,
@@ -138,7 +137,7 @@ void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
                                                    1 /* num page lru */,
                                                    64 /* block cache slots: 4MB */,
                                                    1 /* num block lru */);
-    
+
       Fiber::TRunner bg_runner(runner_cons);
       std::vector<size_t> merge_mem_cores{0};
       std::vector<size_t> merge_disk_cores{0};
@@ -163,7 +162,6 @@ void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
                                                 &bg_runner,
                                                 BlockSlotsAvailablePerMerger,
                                                 MaxRepoCacheSize,
-                                                WalkerLocalCacheSize,
                                                 TempFileConsolidationThreshold,
                                                 merge_mem_cores,
                                                 merge_disk_cores,
@@ -213,12 +211,12 @@ void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
 
       auto global_repo = manager->NewSafeRepo(global_repo_id, TTtl(0UL));
       auto repo = manager->NewFastRepo(repo_id, TTtl(0UL), global_repo);
-    
+
       Base::TUuid session_id(Base::TUuid::Twister);
       auto session = durable_manager->New<Stig::Server::TSession>(session_id, TTtl(0UL));
 
       cb(session_id, manager, global_repo, repo, scheduler);
-      
+
       sleep(2);
       delete tetris_manager;
       session.Reset();
@@ -243,9 +241,9 @@ void RunTestLogic(const std::function<void (const Base::TUuid &session_id,
 }
 
 FIXTURE(Typical) {
-  RunTestLogic([](const Base::TUuid &session_id, 
-                  const std::unique_ptr<TManager> &manager, 
-                  const TManager::TPtr<Indy::TRepo> &global_repo, 
+  RunTestLogic([](const Base::TUuid &session_id,
+                  const std::unique_ptr<TManager> &manager,
+                  const TManager::TPtr<Indy::TRepo> &global_repo,
                   const TManager::TPtr<Indy::TRepo> &repo,
                   Base::TScheduler &/*scheduler*/) {
     int64_t num_iter = 10L;
@@ -263,7 +261,7 @@ FIXTURE(Typical) {
     const std::string method_name = "test_func";
     uint32_t random_seed = 0;
     Base::Chrono::TTimePnt run_time = Base::Chrono::CreateTimePnt(2013, 10, 23, 17, 47, 14, 0, 0);
- 
+
     /* write an update with the same uuid to the global repo */ {
       Base::TUuid update_id(Base::TUuid::Twister);
       Stig::Server::TMetaRecord meta_record(
@@ -319,9 +317,9 @@ FIXTURE(Typical) {
 }
 
 FIXTURE(Keys) {
-  RunTestLogic([](const Base::TUuid &session_id, 
-                  const std::unique_ptr<TManager> &manager, 
-                  const TManager::TPtr<Indy::TRepo> &global_repo, 
+  RunTestLogic([](const Base::TUuid &session_id,
+                  const std::unique_ptr<TManager> &manager,
+                  const TManager::TPtr<Indy::TRepo> &global_repo,
                   const TManager::TPtr<Indy::TRepo> &repo,
                   Base::TScheduler &scheduler) {
     int64_t num_iter = 10L;
@@ -339,7 +337,7 @@ FIXTURE(Keys) {
     const std::string method_name = "test_func";
     uint32_t random_seed = 0;
     Base::Chrono::TTimePnt run_time = Base::Chrono::CreateTimePnt(2013, 10, 23, 17, 47, 14, 0, 0);
- 
+
     /* write an update with the same uuid to the global repo */ {
       Base::TUuid update_id(Base::TUuid::Twister);
       Stig::Server::TMetaRecord meta_record(
@@ -392,9 +390,9 @@ FIXTURE(Keys) {
 }
 
 FIXTURE(Tombstone) {
-  RunTestLogic([](const Base::TUuid &session_id, 
-                  const std::unique_ptr<TManager> &manager, 
-                  const TManager::TPtr<Indy::TRepo> &/*global_repo*/, 
+  RunTestLogic([](const Base::TUuid &session_id,
+                  const std::unique_ptr<TManager> &manager,
+                  const TManager::TPtr<Indy::TRepo> &/*global_repo*/,
                   const TManager::TPtr<Indy::TRepo> &repo,
                   Base::TScheduler &scheduler) {
     int64_t num_iter = 10L;
@@ -412,7 +410,7 @@ FIXTURE(Tombstone) {
     const std::string method_name = "test_func";
     uint32_t random_seed = 0;
     Base::Chrono::TTimePnt run_time = Base::Chrono::CreateTimePnt(2013, 10, 23, 17, 47, 14, 0, 0);
- 
+
     for (int64_t i = 0; i < num_iter; ++i) {
       /* write num_iter updates to the repo */
       Base::TUuid update_id(Base::TUuid::Twister);

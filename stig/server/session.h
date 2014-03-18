@@ -1,15 +1,15 @@
-/* <stig/server/session.h> 
+/* <stig/server/session.h>
 
    An user's session.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,11 +94,17 @@ namespace Stig {
         TServer(size_t num_runners) : RunnerCons(num_runners), SlowAssignmentCounter(0UL), FastAssignmentCounter(0UL) {}
 
         /* TODO */
+        void InitalizeFramePoolManager(size_t num_frames, size_t frame_stack_size, Indy::Fiber::TRunner *runner) {
+          FramePoolManager = std::unique_ptr<Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>>(
+            new Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>(num_frames, frame_stack_size, runner));
+        }
+
+        /* TODO */
         Indy::Fiber::TRunner::TRunnerCons RunnerCons;
         std::vector<std::unique_ptr<Indy::Fiber::TRunner>> SlowRunnerVec;
         std::vector<std::unique_ptr<std::thread>> SlowRunnerThreadVec;
         std::atomic<size_t> SlowAssignmentCounter;
-        Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> FramePoolManager;
+        std::unique_ptr<Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *>> FramePoolManager;
         std::vector<std::unique_ptr<Indy::Fiber::TRunner>> FastRunnerVec;
         std::atomic<size_t> FastAssignmentCounter;
         std::vector<std::unique_ptr<std::thread>> FastRunnerThreadVec;
@@ -218,8 +224,6 @@ namespace Stig {
       /* Stream out. */
       virtual void Write(Io::TBinaryOutputStream &strm) const override;
 
-      private:
-
       /* Add the given pov to the collection of povs we'll keep open. */
       void AddPov(const Durable::TPtr<TPov> &pov);
 
@@ -257,4 +261,3 @@ namespace Stig {
   }  // Server
 
 }  // Stig
-

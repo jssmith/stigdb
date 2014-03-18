@@ -1,15 +1,15 @@
-/* <strm/in.h> 
+/* <strm/in.h>
 
    Base classes for the producers and consumers of in-flowing data.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <cstddef>
-#include <stdexcept>
 
 #include <base/no_copy_semantics.h>
 #include <strm/past_end.h>
@@ -44,7 +43,7 @@ namespace Strm {
          attached.  Destroy the consumer first. */
       virtual ~TProd();
 
-      /* Called by our producer when it wants to get a new workspace and/or
+      /* Called by our consumer when it wants to get a new workspace and/or
          give us back a previous workspace.  The 'release_count' indicates the
          number of workspaces, starting with the oldest, that the consumer is
          now done with.  We are free to reclaim these and the consumer will
@@ -61,7 +60,8 @@ namespace Strm {
          the producer will call Cycle() again in the future, giving us back
          this workspace so we may reclaim it.  If 'start' and 'limit' are null,
          then the consumer doesn't want any additional data and we should just
-         return false.  In this case, we should definitely not throw. */
+         return false, which causes the client to never call back again.  In
+         this case, we should definitely not throw. */
       virtual bool Cycle(
           size_t release_count, const char **start, const char **limit) = 0;
 
@@ -173,4 +173,3 @@ namespace Strm {
   }  // In
 
 }  // Strm
-

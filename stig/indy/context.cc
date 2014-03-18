@@ -1,15 +1,15 @@
-/* <stig/indy/context.cc> 
+/* <stig/indy/context.cc>
 
    Implements <stig/indy/context.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -81,8 +81,8 @@ Indy::TKey TContext::operator[](const Indy::TIndexKey &index_key) {
     const Indy::TPresentWalker::TItem &item = *walker;
     return Indy::TKey(Atom::TCore(GetArena(), alloca(Sabot::State::GetMaxStateSize()), item.OpArena, item.Op), GetArena());
   }
-  /* We probably shouldn't be returning an empty var here... but that's what spa does */
-  //throw std::runtime_error("Key Not Found");
+  /* We return an empty var here because in the case of an optional type being returned, the result is "empty" not a throw.
+     A wrapper promotes empty -> throw if we need to end up as not an optional. */
   return Indy::TKey(Atom::TCore(), nullptr);
 }
 

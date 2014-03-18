@@ -1,15 +1,15 @@
-/* <strm/out.h> 
+/* <strm/out.h>
 
    Base classes for the producers and consumers of out-flowing data.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,20 +42,27 @@ namespace Strm {
          attached.  Destroy the producer first. */
       virtual ~TCons();
 
-      /* Called by our producer when it wants to get a new workspace and/or
-         give us back the previous workspace with data in it for us to consume.
-         If 'cursor' is non-null, then it points into the workspace we most
-         recently gave to the producer, marking the limit of the data we must
-         now consume.  If 'cursor' is at the start of the workspace, we don't
-         have to consume anything.  If 'start' and 'limit' are non-null, then
-         the producer wants a new workspace into which to begin producing data.
-         We must set these such that 'start' is non-null and less-than 'limit'.
-         We are guaranteed that the producer will call Cycle() again in the
-         future, giving us back this workspace, possibly with data in it.  If
-         we cannot consume the data or if we cannot provide a workspace, we
-         must throw.  Note that it is acceptible (and maybe desireable) for the
-         consumer to reuse workspaces, as long as it has handled the data they
-         previously contained. */
+      /* Called by our producer when it wants to get a new workspace and/or give us back the previous workspace with
+         data in it for us to consume.
+
+         If 'cursor' is non-null then
+            cursor points into the workspace we most recently gave to the producer
+            cursor marks the limit of the data we must now consume.
+            If 'cursor' is at the start of the workspace we
+              don't have to consume anything.
+
+         If 'start' and 'limit' are non-null, then
+            The producer wants a new workspace into which to begin producing data.
+            We must set these such that 'start' is non-null and less-than 'limit'.
+
+         We are guaranteed that the producer will call Cycle() again in the future, giving us back this workspace,
+         possibly with data in it.
+
+         If we cannot consume the data or if we cannot provide a workspace,
+            we must throw.
+
+         NOTE: It is acceptible (possibly desirable) for the consumer to reuse workspaces, as long as it has handled the
+         data previously contained. */
       virtual void Cycle(char *cursor, char **start, char **limit) = 0;
 
       private:
@@ -122,4 +129,3 @@ namespace Strm {
   }  // Out
 
 }  // Strm
-

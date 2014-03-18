@@ -1,15 +1,15 @@
-/* <stig/indy/disk/durable_manager.cc> 
+/* <stig/indy/disk/durable_manager.cc>
 
    Implements <stig/indy/disk/durable_manager.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -78,7 +78,7 @@ TDurableManager::TDiskOrderedLayer::~TDiskOrderedLayer() {
 
 TDurableManager::TDurableManager(TScheduler *scheduler,
                                  Fiber::TRunner::TRunnerCons &runner_cons,
-                                 Base::TThreadLocalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager,
+                                 Base::TThreadLocalGlobalPoolManager<Indy::Fiber::TFrame, size_t, Indy::Fiber::TRunner *> *frame_pool_manager,
                                  DurableManager::TManager *manager,
                                  Util::TEngine *engine,
                                  size_t max_cache_size,
@@ -169,7 +169,7 @@ void TDurableManager::RunLayerCleaner() {
   if (Engine->IsDiskBased()) {
     /* if this is a disk based engine, allocate event pools */
     assert(!Disk::Util::TDiskController::TEvent::LocalEventPool);
-    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalRegisteredPool(&Disk::Util::TDiskController::TEvent::DiskEventPoolManager, 1000UL);
+    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalGlobalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalPool(Disk::Util::TDiskController::TEvent::DiskEventPoolManager.get());
   }
   TDurableLayer *durable_layer = nullptr;
   for (;;) {
@@ -270,7 +270,7 @@ void TDurableManager::RunWriter() {
   if (Engine->IsDiskBased()) {
     /* if this is a disk based engine, allocate event pools */
     assert(!Disk::Util::TDiskController::TEvent::LocalEventPool);
-    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalRegisteredPool(&Disk::Util::TDiskController::TEvent::DiskEventPoolManager, 1000UL);
+    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalGlobalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalPool(Disk::Util::TDiskController::TEvent::DiskEventPoolManager.get());
   }
   Disk::Util::TVolume::TDesc::TStorageSpeed storage_speed = Disk::Util::TVolume::TDesc::TStorageSpeed::Fast;
   Base::TTime next_flush;
@@ -342,7 +342,7 @@ void TDurableManager::RunMerger() {
   if (Engine->IsDiskBased()) {
     /* if this is a disk based engine, allocate event pools */
     assert(!Disk::Util::TDiskController::TEvent::LocalEventPool);
-    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalRegisteredPool(&Disk::Util::TDiskController::TEvent::DiskEventPoolManager, 1000UL);
+    Disk::Util::TDiskController::TEvent::LocalEventPool = new TThreadLocalGlobalPoolManager<Disk::Util::TDiskController::TEvent>::TThreadLocalPool(Disk::Util::TDiskController::TEvent::DiskEventPoolManager.get());
   }
   Disk::Util::TVolume::TDesc::TStorageSpeed storage_speed = Disk::Util::TVolume::TDesc::TStorageSpeed::Fast;
   Base::TTime next_flush;

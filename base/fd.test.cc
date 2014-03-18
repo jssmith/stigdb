@@ -1,15 +1,15 @@
-/* <base/fd.test.cc> 
+/* <base/fd.test.cc>
 
    Unit test for <base/fd.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,8 @@
    limitations under the License. */
 
 #include <base/fd.h>
+
+#include <unistd.h>
 
 #include <cstring>
 
@@ -57,9 +59,55 @@ FIXTURE(Pipe) {
 
 FIXTURE(SocketPair) {
   TFd lhs, rhs;
+
+  EXPECT_FALSE(IsValidFd(lhs));
+  EXPECT_FALSE(IsValidFd(rhs));
+
   TFd::SocketPair(lhs, rhs, AF_UNIX, SOCK_STREAM, 0);
+
+  EXPECT_TRUE(IsValidFd(lhs));
+  EXPECT_TRUE(IsValidFd(rhs));
+
   Transact(lhs, rhs);
   Transact(rhs, lhs);
+
+  // Non-system-fds shouldn't be system fds.
+  EXPECT_FALSE(lhs.IsSystemFd());
+  EXPECT_FALSE(rhs.IsSystemFd());
+
   CheckClose(lhs, rhs);
 }
 
+// Handling of stdin, stdout, stderr
+FIXTURE(SystemFd) {
+  {
+    TFd fd(STDIN_FILENO);
+    // We consider it a system fd
+    EXPECT_TRUE(fd.IsSystemFd());
+
+    //We don't dup() system fds.
+    TFd fd2(fd);
+    EXPECT_EQ(int(fd2), STDIN_FILENO);
+  }
+
+  // Checks that we didn't close the fd
+  EXPECT_TRUE(IsValidFd(STDIN_FILENO));
+
+  // Repeat the checks for STDOUT, STDERR
+  {
+    TFd fd(STDOUT_FILENO);
+    EXPECT_TRUE(fd.IsSystemFd());
+    TFd fd2(fd);
+    EXPECT_EQ(int(fd2), STDOUT_FILENO);
+  }
+  EXPECT_TRUE(IsValidFd(STDOUT_FILENO));
+
+  {
+    TFd fd(STDERR_FILENO);
+    EXPECT_TRUE(fd.IsSystemFd());
+    TFd fd2(fd);
+    EXPECT_EQ(int(fd2), STDERR_FILENO);
+  }
+  EXPECT_TRUE(IsValidFd(STDERR_FILENO));
+
+}

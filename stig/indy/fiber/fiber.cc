@@ -1,15 +1,15 @@
-/* <stig/indy/fiber/fiber.cc> 
+/* <stig/indy/fiber/fiber.cc>
 
    Implements <stig/indy/fiber/fiber.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ using namespace Stig::Indy::Fiber;
 
 __thread TRunner *TRunner::LocalRunner = nullptr;
 __thread TFrame *TFrame::LocalFrame = nullptr;
-__thread Base::TThreadLocalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalRegisteredPool *TFrame::LocalFramePool = nullptr;
+__thread Base::TThreadLocalGlobalPoolManager<TFrame, size_t, TRunner *>::TThreadLocalPool *TFrame::LocalFramePool = nullptr;
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"

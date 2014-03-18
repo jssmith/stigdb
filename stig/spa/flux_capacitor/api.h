@@ -1,15 +1,15 @@
-/* <stig/spa/flux_capacitor/api.h> 
+/* <stig/spa/flux_capacitor/api.h>
 
    TODO
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,16 +32,16 @@
 #include <inv_con/ordered_list.h>
 #include <inv_con/unordered_multimap.h>
 #include <multi_event/multi_event.h>
-#include <stig/any_honcho.h>
+#include <stig/spa/any_honcho.h>
 #include <stig/spa/flux_capacitor/flux_capacitor.h>
 #include <stig/uuid.h>
 
 namespace Stig {
 
-  /* Forward Declaration. */
-  class THoncho;
-
   namespace Spa {
+
+    /* Forward Declaration. */
+    class THoncho;
 
     /* Forward Decl for friendship */
     class TService;
@@ -278,7 +278,7 @@ namespace Stig {
         /* TODO */
         int Interrupt[2];
 
-        friend class ::Stig::THoncho;
+        friend class ::Stig::Spa::THoncho;
 
       };  // TTetristHandler
 

@@ -3,12 +3,15 @@ People who have contributed to the Stig project.
 Name: How you wish to be known. Need not be your real name. REQUIRED.
 Freenet IRC: Your nick on Freenet. Join us on #stigdb. OPTIONAL.
 Github ID: Your Github profile ID (from which you send Stig pull requests). OPTIONAL.
+CLA?: Whether we have a signed CLA on file in stigdb-legal
 
-Name                        Freenet IRC                 Github ID
+Name                        Freenet IRC        Github ID         CLA?
 =====================================================================
-Jason Lucas                 JasonL9000                  jasonl9000
-Joris Van Remoortere        jmlvanre                    jmlvanre
-Cody Maloney                firebird347                 cmaloney
-Michael Park                mpark                       mpark
-Chris Tidder                ctidder                     ctidder
-VM Brasseur                 vmbrasseur                  vmbrasseur
+Jason Lucas                 JasonL9000         jasonl9000        Y
+Joris Van Remoortere        jmlvanre           jmlvanre          Y
+Cody Maloney                firebird347        cmaloney          Y
+Michael Park                mpark              mpark
+Chris Tidder                ctidder            ctidder
+Deanna Rubin                deannarubin        dr4b
+Joshua Ball                 sciolizer          sciolizer
+VM Brasseur                 vmbrasseur         vmbrasseur        Y

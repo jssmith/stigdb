@@ -1,15 +1,15 @@
-/* <base/io_utils.cc> 
+/* <base/io_utils.cc>
 
    Implements <base/io_utils.h>.
 
-   Copyright 2010-2014 Tagged
-   
+   Copyright 2010-2014 Stig LLC
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
-   
+
      http://www.apache.org/licenses/LICENSE-2.0
-   
+
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,10 @@
 #include <base/time.h>
 
 using namespace std;
+
+bool Base::IsValidFd(int fd) {
+  return fcntl(fd, F_GETFD) >= 0;
+}
 
 size_t Base::ReadAtMost(int fd, void *buf, size_t max_size) {
   return IfLt0(read(fd, buf, max_size));
@@ -206,4 +210,3 @@ void Base::SetNonBlocking(int fd) {
   IfLt0(flags = fcntl(fd, F_GETFL, 0));
   IfLt0(fcntl(fd, F_SETFL, flags | O_NONBLOCK));
 }
-
