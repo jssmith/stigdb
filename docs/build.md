@@ -23,11 +23,15 @@
 
 ## Quick Start
 
-The below will build stig in _debug_ mode:
+The below will build stig in _debug_ mode **on Ubuntu 13.10**:
 
 ```
 (create a separate stig partition)
-(install prerequisites for your platform per below)
+sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
+sudo apt-get update
+sudo apt-get install gcc-4.8
+sudo apt-get install g++
+sudo apt-get install flex bison util-linux git build-essential uuid-dev libaio-dev libgmp-dev libsctp-dev lksctp-tools zlib1g-dev libicu-dev libreadline6-dev libsnappy-dev valgrind
 cd ~
 mkdir stig
 cd stig
