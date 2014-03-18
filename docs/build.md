@@ -76,7 +76,9 @@ There are several prerequisites which must be installed for a successful build o
 ### Compiler
 
 * gcc-4.8.2 or above (4.8.0 has a nasty bug which craters Stig and 4.8.1 has several bugs in its handling of c++11). 4.7 will work for the moment, but we'll be adopting some C++11 features which 4.7 doesn't support in the near future. So it's best you just start out with a more modern version of the compiler.
-    * The preferred method of installing gcc-4.8.2 is to use [a pre-compiled binary](https://launchpad.net/~ubuntu-toolchain-r/+archive/test?field.series_filter=saucy). If that does not work or is not available for your Linux distribution, please see the [gcc compile tips](#gcc-compile-tips) below.
+    * The preferred method of installing gcc-4.8.2 is to use [a pre-compiled binary](https://launchpad.net/~ubuntu-toolchain-r/+archive/ppa). If that does not work or is not available for your Linux distribution, please see the [gcc compile tips](#gcc-compile-tips) below.
+* g++ version 4.8.2 or above
+    * If you use the [PPA](https://launchpad.net/~ubuntu-toolchain-r/+archive/ppa), you should be able to install this with a simple `sudo apt-get install g++`.
 
 Shortly Stig will be switching from gcc to clang+LLVM 3.4, but at this moment compiling with clang is not yet supported.
 
@@ -228,6 +230,7 @@ The [gcc installation docs](http://gcc.gnu.org/install/index.html) and [wiki](ht
 * As well, since many of the libraries required to compile Stig are also necessary for compiling gcc, installing Stig pre-requisites before building gcc can sometimes make the process run more smoothly.
 * We've found that the gcc build frequently will fail when building for Java compiling. As Stig has no need for this, we typically run `configure` with the `--enable-languages=c,c++` flag.
 * Make sure to use `--prefix=` during configuration and set it to a directory which will be in your `$PATH`, `$LD_LIBRARY_PATH`, and `$LD_RUN_PATH` (or be sure to add it to these paths after the installation is complete).
+* Building gcc takes a lot of space. Before starting, make sure that your build directory has at least 5GB of free space available.
 
 For Ubuntu 13.10, it's possible to get a successful gcc build and installation with the following steps:
 
