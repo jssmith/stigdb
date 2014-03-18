@@ -29,15 +29,25 @@ The below will build stig in _debug_ mode:
 (create a separate stig partition)
 (install prerequisites for your platform per below)
 cd ~
+mkdir stig
+cd stig
 git clone git://github.com/stigdb/stigdb.git ./src
 cd src
-export PATH=${PATH}:${HOME}/src/tools
-chmod +x bootstrap.sh
+export PATH=${PATH}:${HOME}/stig/src/tools
 make
 make test
 ```
 
 To build stig in _release_ mode, simply replace the `make` line above with `make release`.
+
+The above commands create a layout like so:
+```
+~
+|-- stig
+     |-- .starsha
+     |-- out
+     |-- src
+```
 
 ## Supported Platforms
 
@@ -55,7 +65,7 @@ Because of the specialized nature of its storage requirements, Stig must maintai
 
 While this step is not required for building the Stig binaries, it may be something you'd prefer to do prior to installing any other required software.
 
-Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is 1GB. 
+Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is 1GB.
 
 **WARNING!** Stig will overwrite and destroy any data which exists in this partition. Please do not re-use a partition which contains information you'd like to retain.
 
@@ -102,6 +112,11 @@ apt-get install flex bison util-linux git build-essential uuid-dev libaio-dev li
 ```
 yum groupinstall "Development Tools" --exclude=git
 yum install flex bison util-linux uuid-devel libaio-devel gmp-devel mpfr-devel libmpc-devel libuuid-devel glibc-devel libicu-devel lksctp-tools lksctp-tools-devel readline-devel zlib-devel snappy-devel valgrind
+```
+
+#### ArchLinux
+```
+pacman -S flex bison util-linux libaio gmp mpfr libmpc glibc icu lksctp-tools readline zlib snappy valgrind
 ```
 
 ## Retrieving the Stig source code
@@ -172,7 +187,7 @@ make clean
 ```
 ### warning: memset used with constant zero length parameter
 
-This error can occur during a `make release`. It is due to using an old version of gcc. 
+This error can occur during a `make release`. It is due to using an old version of gcc.
 
 To resolve: Please upgrade to gcc 4.8.2 or newer.
 
@@ -193,7 +208,7 @@ To resolve: Please upgrade to gcc 4.8.2 or newer.
 Exmple of this error:
 
 ```
-stig/core_import.o: 
+stig/core_import.o:
 /usr/include/x86_64-linux-gnu/bits/poll2.h: In member function 'IoMain':
 /usr/include/x86_64-linux-gnu/bits/poll2.h:41:60: warning: call to '__poll_chk_warn' declared with attribute warning: poll called with fds buffer too small file nfds entries [enabled by default]
   return __poll_chk (__fds, __nfds, __timeout, __bos (__fds));
