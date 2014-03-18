@@ -213,6 +213,7 @@ The [gcc installation docs](http://gcc.gnu.org/install/index.html) and [wiki](ht
 * As well, since many of the libraries required to compile Stig are also necessary for compiling gcc, installing Stig pre-requisites before building gcc can sometimes make the process run more smoothly.
 * We've found that the gcc build frequently will fail when building for Java compiling. As Stig has no need for this, we typically run `configure` with the `--enable-languages=c,c++` flag.
 * Make sure to use `--prefix=` during configuration and set it to a directory which will be in your `$PATH`, `$LD_LIBRARY_PATH`, and `$LD_RUN_PATH` (or be sure to add it to these paths after the installation is complete).
+* Building gcc takes a lot of space. Before starting, make sure that your build directory has at least 5GB of free space available.
 
 For Ubuntu 13.10, it's possible to get a successful gcc build and installation with the following steps:
 
