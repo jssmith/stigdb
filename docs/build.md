@@ -44,15 +44,6 @@ make test
 
 To build stig in _release_ mode, simply replace the `make` line above with `make release`.
 
-The above commands create a layout like so:
-```
-~
-|-- stig
-     |-- .starsha
-     |-- out
-     |-- src
-```
-
 ## Supported Platforms
 
 Stig should work on any Linux-based operating system which uses kernel version 2.6.32 or greater.
@@ -141,6 +132,18 @@ Naturally, adjust the destination path above accordingly for your needs. Just be
 ## Build Commands
 
 While Stig has a Makefile, it's just a basic wrapper for Stig's `starsha` build tool.
+
+`starsha` creates a directory layout like so:
+
+```
+~
+|-- stig
+     |-- .starsha
+     |-- out
+     |-- src
+```
+
+After compilation completes, all binaries can be found under the `~/stig/out` directory.
 
 ### make
 
