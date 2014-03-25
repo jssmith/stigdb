@@ -41,12 +41,11 @@ class TCmd final
         List(false),
         CreateVolume(false),
         InstanceName(""),
-        VolumeKind("Stripe"),
+        VolumeKind("stripe"),
         DeviceSpeed(""),
         NumDevicesInVolume(0UL),
         ReplicationFactor(1UL),
-        StripeSizeKB(64),
-        ReadTest(false) {}
+        StripeSizeKB(512){}
 
   /* Construct from argc/argv. */
   TCmd(int argc, char *argv[])
@@ -69,9 +68,6 @@ class TCmd final
   size_t ReplicationFactor;
   size_t StripeSizeKB;
 
-  /* If true, perform a read test on the specified instance volume */
-  bool ReadTest;
-
   /* The device set. */
   std::set<std::string> DeviceSet;
 
@@ -90,10 +86,6 @@ class TCmd final
           "Zero out the super block of the provded devices."
       );
       Param(
-          &TCmd::ReadTest, "read-test", Optional, "read-test\0",
-          "Perform a read test on the specified instance volume. (Not Implemented)"
-      );
-      Param(
           &TCmd::List, "list", Optional, "list\0l\0",
           "List all the devices on this system."
       );
@@ -105,10 +97,12 @@ class TCmd final
           &TCmd::InstanceName, "instance-name", Optional, "instance-name\0iname\0",
           "The instance name used for the newly created volume."
       );
+      /* Disabling Chained for now
       Param(
           &TCmd::VolumeKind, "strategy", Optional, "strategy\0strat\0",
           "(stripe | chain). The strategy used when creating a new volume."
       );
+      */
       Param(
           &TCmd::DeviceSpeed, "device-speed", Optional, "device-speed\0speed\0",
           "(fast | slow). The speed of the devices used in creating a new volume."
@@ -117,10 +111,12 @@ class TCmd final
           &TCmd::NumDevicesInVolume, "num-devices", Optional, "num-devices\0nd\0",
           "The number of device names expected when creating a new volume."
       );
+      /* Disabling Replication factor for now
       Param(
           &TCmd::ReplicationFactor, "replication-factor", Optional, "replication-factor\0rf\0",
           "The replication factor used when creating a new volume."
       );
+      */
       Param(
           &TCmd::StripeSizeKB, "stripe-size", Optional, "stripe-size\0",
           "The stripe size (in KB) used when creating a new striped volume."
@@ -146,8 +142,6 @@ int main(int argc, char *argv[]) {
       TDeviceUtil::ZeroSuperBlock(device_path.c_str());
     }
     return EXIT_SUCCESS;
-  } else if (cmd.ReadTest) {
-    throw std::logic_error("Read test is not implemented");
   }
   Util::TCacheCb cache_cb = [](TCacheInstr /*cache_instr*/, const TOffset /*logical_start_offset*/, void */*buf*/, size_t /*count*/) {};
   TDiskController controller;
@@ -156,7 +150,7 @@ int main(int argc, char *argv[]) {
     stringstream ss;
     //disk_util.List(ss);
     cout << ss.str();
-    cout << "Device\t\tStigFS\tVolumeId\tVolume Device #\t# Devices in Volume\tLogical Extent Start\tLogical Extent Size\tVolume Kind\tInstance Name" << endl;
+    cout << "Device\t\tStigFS\tVolumeId\tVolume Device #\t# Devices in Volume\tLogical Extent Start\tLogical Extent Size\tVolume Kind" << endl;
     TDeviceUtil::ForEachDevice([](const char *path) {
       TDeviceUtil::TStigDevice device_info;
       string path_to_device = "/dev/";
