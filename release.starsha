@@ -14,6 +14,7 @@
         "-O3";
         "-flto";
         "-s";
+        "-U_FORTIFY_SOURCE";
       }
       "libs" {
         "-luuid";
@@ -46,6 +47,7 @@
         "-Wno-delete-non-virtual-dtor";
         "-std=c++11";
         "-msse2";
+        "-U_FORTIFY_SOURCE";
       }
     }
     "gcc" {
@@ -61,6 +63,7 @@
         "-Wextra";
         "-Wno-unused";
         "-std=c11";
+        "-U_FORTIFY_SOURCE";
       }
     }
   }
@@ -71,6 +74,7 @@
           "-O3";
           "-flto";
           "-DNDEBUG";
+          "-U_FORTIFY_SOURCE";
         }
       }
     }
@@ -78,10 +82,14 @@
       "ld" {
         "flags" {
           "-Wl,--as-needed";
+          "-rdynamic";
+          "-Wl,--hash-style=gnu";
+          "-Wl,--no-copy-dt-needed-entries";
+          "-Wl,-z,relro";
           "-O3";
           "-flto";
           "-s";
-          "-rdynamic";
+          "-U_FORTIFY_SOURCE";
           "-Wl,-rpath -Wl,/opt/gcc/lib64 -Wl,--enable-new-dtags";
         }
         "libs" {
@@ -118,6 +126,7 @@
           "-std=c++11";
           "-msse2";
           "-Wno-invalid-offsetof";
+          "-U_FORTIFY_SOURCE";
         }
       }
     }
