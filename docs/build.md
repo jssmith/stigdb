@@ -40,8 +40,10 @@ cd src
 export PATH=${PATH}:${HOME}/stig/src/tools
 make
 make test
+make install
 ```
 
+**NOTA BENE!**
 To build stig in _release_ mode, simply replace the `make` line above with `make release`.
 
 ## Supported Platforms
@@ -63,6 +65,17 @@ While this step is not required for building the Stig binaries, it may be someth
 Please create the new partition according to the directions for your Linux distribution. The minimum recommended partition size is 1GB.
 
 **WARNING!** Stig will overwrite and destroy any data which exists in this partition. Please do not re-use a partition which contains information you'd like to retain.
+
+### Memory simulation mode
+
+For development purposes, it is possible to start up the `stigi` server in _memory simulation_ mode.
+
+Memory simulation mode is the equivalent of having the Stig block device in memory rather than on disk. Running in memory simulation mode removes the requirement to have a separate volume/partition for the Stig databases.
+
+To run in memory simulation mode, start the `stigi` server with the `--mem_sim` flag.
+
+**NOTA BENE!**
+Data **will not** persist in memory simulation mode. When the server is shut down any data stored in memory will disappear.
 
 ## Pre-Requisites
 
@@ -143,7 +156,7 @@ While Stig has a Makefile, it's just a basic wrapper for Stig's `starsha` build 
      |-- src
 ```
 
-After compilation completes, all binaries can be found under the `~/stig/out` directory.
+After compilation completes, all binaries can be found under the `~/stig/out` directory. If you've run a debug build (the default build type), the binaries will be under `~/stig/out/debug`. If it was a release build (`make release`), the binaries will be under `~/stig/out/release`.
 
 ### make
 
@@ -169,6 +182,17 @@ Builds and then runs the Stig language tests.
 This is an optional step. It takes quite a while to run.
 
 NOTE: Your limit for number of open files must be greater than 4096, or some tests will spuriously fail.
+
+### make install
+
+Installs the Stig binaries. By default all binaries are installed under `/usr/local`.
+
+To change the installation directory, define it in a `PREFIX` variable before running `make`:
+
+```
+export PREFIX=/installation/path/
+make
+```
 
 ### make clean
 
