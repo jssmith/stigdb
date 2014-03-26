@@ -1,6 +1,8 @@
 # BUILDING STIG
 
 * [Quick Start](#quick-start)
+    * [Debug (default)](#debug-build)
+    * [Release](#release-build)
 * [Supported Platforms](#supported-platforms)
 * [Pre-Requisites](#pre-requisites)
     * [Compiler](#compiler)
@@ -23,7 +25,11 @@
 
 ## Quick Start
 
-The below will build stig in _debug_ mode **on Ubuntu 13.10**:
+The instructions below are for **UBUNTU 13.10**. Please modify them accordingly for your Linux distribution.
+
+### Debug Build
+
+This is the default build mode for Stig.
 
 ```
 (create a separate stig partition)
@@ -40,11 +46,27 @@ cd src
 export PATH=${PATH}:${HOME}/stig/src/tools
 make
 make test
-make install
 ```
 
-**NOTA BENE!**
-To build stig in _release_ mode, simply replace the `make` line above with `make release`.
+### Release Build
+
+```
+(create a separate stig partition)
+sudo add-apt-repository ppa:ubuntu-toolchain-r/ppa
+sudo apt-get update
+sudo apt-get install gcc-4.8
+sudo apt-get install g++
+sudo apt-get install flex bison util-linux git build-essential uuid-dev libaio-dev libgmp-dev libsctp-dev lksctp-tools zlib1g-dev libicu-dev libreadline6-dev libsnappy-dev valgrind
+cd ~
+mkdir stig
+cd stig
+git clone git://github.com/stigdb/stigdb.git ./src
+cd src
+export PATH=${PATH}:${HOME}/stig/src/tools
+PREFIX=/installation/path ./bootstrap.sh
+make release
+sudo make install
+```
 
 ## Supported Platforms
 
@@ -74,8 +96,8 @@ Memory simulation mode is the equivalent of having the Stig block device in memo
 
 To run in memory simulation mode, start the `stigi` server with the `--mem_sim` flag.
 
-**NOTA BENE!**
-Data **will not** persist in memory simulation mode. When the server is shut down any data stored in memory will disappear.
+> **NOTA BENE!**
+> Data **will not** persist in memory simulation mode. When the server is shut down any data stored in memory will disappear.
 
 ## Pre-Requisites
 
@@ -160,18 +182,23 @@ After compilation completes, all binaries can be found under the `~/stig/out` di
 
 ### make
 
-Runs `bootstrap.sh`. This builds the `starsha` build tool and then builds the core Stig apps. Behind the scenes, it's actually running these two commands:
+Runs `bootstrap.sh`. This builds the `starsha` build tool and then builds the core Stig apps _in debug mode_. 
+
+Behind the scenes, it's actually running these two commands:
 
 ```
 make tools/starsha
 make apps
 ```
 
-**NOTA BENE**: The `starsha` build tool is designed to compile Stig as quickly as possible. In order to do this, it grabs as many system resources as it can. This means that running starsha _will peg your machine_. The build will finish quickly, but in the duration you may find that other applications will not be very responsive.
+> **NOTA BENE!** 
+> The `starsha` build tool is designed to compile Stig as quickly as possible. In order to do this, it grabs as many system resources as it can. This means that running starsha _will peg your machine_. The build will finish relatively quickly, but in the duration you may find that other applications will not be very responsive.
 
 ### make test
 
 Builds and then runs the Stig unit test suite.
+
+These tests are build in debug mode. While it is possible to run `make test` after a release build, it is not recommended as the results can be unexpected.
 
 NOTE: A number of the tests require specialized permissions to run.
 
@@ -187,12 +214,24 @@ NOTE: Your limit for number of open files must be greater than 4096, or some tes
 
 Installs the Stig binaries. By default all binaries are installed under `/usr/local`.
 
-To change the installation directory, define it in a `PREFIX` variable before running `make`:
+To change the installation directory, define it in a `PREFIX` variable before running `make release`:
 
 ```
-export PREFIX=/installation/path/
-make
+PREFIX=/installation/path ./bootstrap.sh
+make release
+make install
 ```
+
+If the user performing the build does not have permission to write to the path defined in `PREFIX`, the installation must be run as root:
+
+```
+PREFIX=/installation/path ./bootstrap.sh
+make release
+sudo make install
+```
+
+> **NOTA BENE!**
+> It is **not** advisable to run `make install` on a debug build. Debug binaries are not intended for production usage.
 
 ### make clean
 
