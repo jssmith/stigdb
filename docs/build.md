@@ -45,7 +45,8 @@ git clone git://github.com/stigdb/stigdb.git ./src
 cd src
 export PATH=${PATH}:${HOME}/stig/src/tools
 make
-make test
+make test           (optional but recommended)
+make test_lang      (optional but recommended)
 ```
 
 ### Release Build
@@ -65,6 +66,8 @@ cd src
 export PATH=${PATH}:${HOME}/stig/src/tools
 PREFIX=/installation/path ./bootstrap.sh
 make release
+make test           (optional but recommended)
+make test_lang      (optional but recommended)
 sudo make install
 ```
 
@@ -196,17 +199,29 @@ make apps
 
 ### make test
 
-Builds and then runs the Stig unit test suite.
+Builds and then runs the Stig C++ unit test suite.
 
-These tests are build in debug mode. While it is possible to run `make test` after a release build, it is not recommended as the results can be unexpected.
+This is an optional step but is recommended.
+
+These tests are built and run in debug mode. If the debug binaries do not yet exist in `~/stig/out/debug`, running `make test` will build these binaries before running the unit tests.
 
 NOTE: A number of the tests require specialized permissions to run.
+
+### make test_build
+
+Builds the Stig C++ unit test suite but _does not_ run it.
+
+If the debug binaries do not yet exist in `~/stig/out/debug`, running `make test_build` will build these binaries before building the unit tests.
 
 ### make test_lang
 
 Builds and then runs the Stig language tests.
 
-This is an optional step. It takes quite a while to run.
+This is an optional step but is recommended. 
+
+While these tests do run in parallel for the number of cores available on your system, they still can take quite some time to complete.
+
+If the debug binaries do not yet exist in `~/stig/out/debug`, running `make test_lang` will build these binaries before running the language tests.
 
 NOTE: Your limit for number of open files must be greater than 4096, or some tests will spuriously fail.
 
@@ -258,6 +273,15 @@ If the build ever fails, please run the following before trying again:
 ```
 make clean
 ```
+
+### Build appears stuck at `[1] Jobs queued in wave` (or 0 or 2)
+
+This is the [starsha infinite loop bug](https://github.com/StigDB/stigdb/issues/127). A workaround:
+
+* Hit `ctrl-C` to break out of the build
+* Type `touch stig/stig.nycr`
+* Re-run your make command
+
 ### warning: memset used with constant zero length parameter
 
 This error can occur during a `make release`. It is due to using an old version of gcc.
