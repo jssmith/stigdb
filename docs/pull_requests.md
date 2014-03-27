@@ -48,3 +48,11 @@ When submitting your request, please always provide **ample** pull request notes
 ### A stigdb core team member will assign and/or review your pull request
 
 The Stig core team aims to have all pull requests reviewed within a week. If that's not possible, in that timeframe they'll at least have assigned your pull request to one of the core team for review.
+
+-----
+
+pull_requests.md Copyright 2010-2014 Stig LLC
+
+pull_requests.md is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
