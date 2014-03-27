@@ -314,7 +314,7 @@ stig/core_import.o:
 make: *** [release] Error 1
 ```
 
-## Core dump during `make test`
+### Core dump during `make test`
 
 Some of the tests require special (higher) limits for rtprio and memlock. To resolve this issue, edit `/etc/security/limits.conf` and set the rtprio and memlock values for the root user and any user which will be running tests or Stig binaries.
 
