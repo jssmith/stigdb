@@ -314,6 +314,36 @@ stig/core_import.o:
 make: *** [release] Error 1
 ```
 
+### Core dump during `make test`
+
+Some of the tests require special (higher) limits for rtprio and memlock. To resolve this issue, edit `/etc/security/limits.conf` and set the rtprio and memlock values for the root user and any user which will be running tests or Stig binaries.
+
+* `rtprio` should be set to 100 to allow the tests to boost thread priorities
+* `memlock` should be set to the maximum amount of memory you expect your tests and server to allocate.
+
+Example `/etc/security/limits.com` entries:
+
+```
+stig        -         rtprio          100
+stig        -         memlock         2050504
+root        -         rtprio          100
+root        -         memlock         2050504
+```
+
+Example of this error:
+
+```
+stig@stig-VirtualBox:~/src$ make test
+starsha stig/stig stig/server/stig stig/spa/spa stig/client stig/stig/indy/disk/util/stig_dm starsha/starsha starsha/dummy stig/core_import
+[0] Jobs queued in wavestarsha --all-="*.test" --test
+[0] Jobs queued in wavestig/indy/memory_layer.test:
+terminate called after throwing an instance of 'std::system_error'
+  what(): Cannot allocate memory
+Aborted (core dumped)
+make: *** [test] Error 1
+stig@stig-VirtualBox:~/src$ 
+```
+
 ## gcc compile tips
 
 gcc can be a real bear to compile, but if your Linux distribution does not have a package available for a gcc version higher than 4.8.1, you'll need to compile it from source.
