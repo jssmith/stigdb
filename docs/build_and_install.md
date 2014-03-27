@@ -1,4 +1,4 @@
-# BUILDING STIG
+# Building and Installing Stig
 
 * [Quick Start](#quick-start)
     * [Debug (default)](#debug-build)
