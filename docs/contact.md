@@ -19,3 +19,11 @@ For more real time conversation, we have the [#stigdb]() IRC channel on [freenod
 ## Stig Legal Email Address
 
 Matters involving licensing, copyright takedown notices, contributor licensing agreements, and similar issued should be addressed to the [stig-legal@stigdb.org](mailto:stig-legal@stigdb.org) email address.
+
+-----
+
+contact.md Copyright 2010-2014 Stig LLC
+
+contact.md is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.

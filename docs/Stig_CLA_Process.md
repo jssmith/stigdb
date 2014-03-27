@@ -10,3 +10,11 @@ Thank you for your interest in contributing to the StigDB ("Stig") project! We w
 * Once you have received a confirmation that your signed CLA was received, contribute your code, documentation, or any other materials to Stig.
 
 Thank you again for your help!
+
+-----
+
+Stig_CLA_Process.md Copyright 2010-2014 Stig LLC
+
+Stig_CLA_Process.md is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
