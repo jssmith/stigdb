@@ -19,7 +19,7 @@ TBD (HDD? SSD? RAM? Processor speed? FS type?)
 
 Requires the latest versions of the gcc and clang/LLVM compilers. Prior to building Stig, you **must** have applied our patches to the compilers and standard library.
 
-See docs/build.md for precise instructions
+See [the build/install docs](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md) for precise instructions
 
 ## Contributing to Stig
 
