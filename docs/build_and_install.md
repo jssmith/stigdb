@@ -15,6 +15,7 @@
 * [Build Commands](#build-commands)
     * [make](#make)
     * [make test](#make-test)
+    * [make test_build](#make-test_build)
     * [make test_lang](#make-test_lang)
     * [make clean](#make-clean)
 * [Platform-specific](#platform-specific)
