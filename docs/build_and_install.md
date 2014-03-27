@@ -4,6 +4,7 @@
     * [Debug (default)](#debug-build)
     * [Release](#release-build)
 * [Supported Platforms](#supported-platforms)
+    * [A note on VMs](#a-note-on-vms)
 * [Pre-Requisites](#pre-requisites)
     * [Compiler](#compiler)
     * [Libraries](#libraries)
@@ -81,6 +82,14 @@ The versions on which it is known to build and run:
 * [Ubuntu 13.10](http://releases.ubuntu.com/13.10/)
 * [CentOS 6.4](http://isoredirect.centos.org/centos/6/isos/x86_64/)
 * [Arch Linux](https://www.archlinux.org)
+
+### A note on VMs
+
+If you plan to build and install Stig on a virtual machine, please consider the following suggestions when configuring the machine:
+
+* 4GB RAM minimum, 8GB RAM recommended
+* 12GB disk space minimum
+* Create a separate partition for the Stig block level device. This partition should be at least 1GB in size.
 
 ## Create a new partition/volume
 
