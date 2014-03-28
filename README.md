@@ -29,7 +29,7 @@ For development, we recommend the following virtual machine configuration:
 
 ## Building Stig
 
-See [the build/install docs](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md) for precise instructions
+See [the build/install docs](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md) for detailed instructions.
 
 ## Contributing to Stig
 
