@@ -25,7 +25,7 @@ When opening an issue, if you can, try to provide the following information:
     * Platform information (operating system/distribution, memory, number of cores, etc.)
 * Enhancement request
     * What you're trying to accomplish (eg, "track viewed posts")
-    * Why you're trying to accomplish it (eg, "so I can jump the user to last un-viewed post)
+    * Why you're trying to accomplish it (eg, "so I can jump the user to last un-viewed post")
     * Platform information (per above)
 
 ## Pull Requests
