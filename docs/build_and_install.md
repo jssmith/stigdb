@@ -229,6 +229,8 @@ Builds and then runs the Stig language tests.
 
 This is an optional step but is recommended. 
 
+This script uses the [littleworkers](https://pypi.python.org/pypi/littleworkers) Python library to run tests in parallel. This library must be installed in order to run `make test_lang`.
+
 While these tests do run in parallel for the number of cores available on your system, they still can take quite some time to complete.
 
 If the debug binaries do not yet exist in `~/stig/out/debug`, running `make test_lang` will build these binaries before running the language tests.
@@ -351,6 +353,16 @@ terminate called after throwing an instance of 'std::system_error'
 Aborted (core dumped)
 make: *** [test] Error 1
 stig@stig-VirtualBox:~/src$ 
+```
+
+### "ImportError: No module named littleworkers" during `make test_lang`
+
+`make test_lang` runs the script `stig/lang_tests/run_tests.py`. This script uses the [littleworkers](https://pypi.python.org/pypi/littleworkers) Python library to run tests in parallel. This library must be installed in order to run `make test_lang`.
+
+On Ubuntu, the command to install the library is:
+
+```
+sudo pip install littleworkers
 ```
 
 ## gcc compile tips
