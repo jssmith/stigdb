@@ -15,7 +15,13 @@ Currently Stig only runs on Linux.
 
 ## System Requirements
 
-TBD (HDD? SSD? RAM? Processor speed? FS type?)
+Stig is designed to make the most of your available system resources. It will use as much as you can spare. Therefore, when in production, the guideline is "the more the merrier."
+
+For development, we recommend the following virtual machine configuration:
+
+* 4GB RAM minimum, 8GB RAM recommended
+* 12GB disk space minimum
+* Create a separate partition for the Stig block level device. This partition should be at least 1GB in size.
 
 ## Building Stig
 
