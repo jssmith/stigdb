@@ -2,6 +2,10 @@
 
 This is the repository for the Stig non-relational database. It's meant to be fast and to scale for billions of users.  Stig provides a single path to data and will eliminate our need for memcache due to its speed and high concurrency.
 
+## Quick Start
+
+See the [quick start](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md#quick-start) section of the document [Building and Installing Stig](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md).
+
 ## Stig features:
 
 * **Points of View**: This is our version of optimistic locking or isolation. [Learn more](https://github.com/StigDB/stigdb/blob/master/docs/pov.md). 
