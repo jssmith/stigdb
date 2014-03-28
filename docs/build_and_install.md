@@ -1,5 +1,5 @@
 # Building and Installing Stig
-
+* [Introduction](#introduction)
 * [Quick Start](#quick-start)
     * [Debug (default)](#debug-build)
     * [Release](#release-build)
@@ -24,6 +24,12 @@
     * [CentOS (6.4 and above)](#centos-64-and-above)
 * [Troubleshooting](#troubleshooting)
 * [gcc compile tips](#gcc-compile-tips)
+
+## Introduction
+
+As the Stig project is still quite young, the build and installation process currently is fairly hands-on. As the project matures we will make this easier and faster. Please bear with us (and this process) as we grow.
+
+If you experience any problems with the build or this documentation, please [open a GitHub issue](https://github.com/StigDB/stigdb/blob/master/docs/contributing.md#open-github-issues) to report it.
 
 ## Quick Start
 
@@ -364,6 +370,59 @@ On Ubuntu, the command to install the library is:
 ```
 sudo pip install littleworkers
 ```
+
+### "No state file" during `make test_lang`
+
+The "No state file" message will be interpretted as a test failure by the unit test framework. **This is a spurious error.** It occurs because the user which is running the test suite has maxed out on open files. The upper limit for number of open files must be greater than 4096 to get rid of these spurious errors.
+
+To increase the open files allowed for the user, edit the `/etc/security/limits.conf' file accordingly. For example:
+
+```
+stig             soft    nofile          10000
+stig             hard    nofile          20000
+```
+
+Now (post reboot) it will report:
+
+```
+stig@stig-VirtualBox:~/stig/src$ ulimit -Hn
+20000
+stig@stig-VirtualBox:~/stig/src$ ulimit -Sn
+10000
+```
+
+You may now re-run `make test_lang`.
+
+### Test failures during `make test_lang`
+
+The language tests verify whether the language compiler functions as intended. Right now, there are a couple of situations where it **does not**. This means that sometimes tests will fail. And that's OK.
+
+Take, for instance, the following output:
+
+```
+stig@stig-VirtualBox:~/stig/src$ make test_lang
+starsha stig/stigc stig/server/stigi stig/spa/spa stig/client/stig_client stig/indy/disk/util/stig_dm starsha/starsha starsha/dummy stig/core_import
+cd stig/lang_tests; ./run_tests.py
+====================================================================
+Changes: general/random.stig
+Differs: Synth + Symbols
+====================================================================
+Changes: general/mutablefilter.stig
+Differs: Synth + Symbols
+Change: 
+Pass: ... SNIP ...
+Fail: general/random.stig,general/mutablefilter.stig
+Overall: 0 changed, 116 passed, 2 failed
+stig@stig-VirtualBox:~/stig/src$ 
+```
+
+This run of `make test_lang` ends with a report of:
+```
+Overall: 0 changed, 116 passed, 2 failed
+```
+The important thing to focus on here is **not** the `2 failed`, but rather the `0 changed`. This (plus the output of the `Change:` line for each of the tests) shows you that, even though the test is reported as failed in the `Synth + Symbols` area, the actual output is not different from the expected one. Therefore, even though the tests are reported as failures (at the synth & symbols compiler level), they in fact worked as expected.
+
+TL;DR: If the test fails but there are no changes reported in the test, it is safe to ignore the failure. It's a bug we need to fix in the compiler, but it will not negatively effect your application.
 
 ## gcc compile tips
 
