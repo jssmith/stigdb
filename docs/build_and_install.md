@@ -76,7 +76,7 @@ PREFIX=/installation/path ./bootstrap.sh
 make release
 make test           (optional but recommended)
 make test_lang      (optional but recommended)
-sudo export PATH=${PATH}:${HOME}/stig/src/tools ; make install
+sudo make install PATH=${PATH}:${HOME}/stig/src/tools
 ```
 
 ## Supported Platforms
