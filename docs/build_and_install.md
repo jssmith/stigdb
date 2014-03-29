@@ -25,6 +25,14 @@
     * [Ubuntu (13.10 and above)](#ubuntu-1310-and-above)
     * [CentOS (6.4 and above)](#centos-64-and-above)
 * [Troubleshooting](#troubleshooting)
+    * [make clean](#make-clean)
+    * [Build appears stuck at 1 Jobs queued in wave (or 0 or 2)](#build-appears-stuck-at-1-jobs-queued-in-wave-or-0-or-2)
+    * [warning: memset used with constant zero length parameter](#warning-memset-used-with-constant-zero-length-parameter)
+    * [warning: call to poll_chk_warn declared with attribute warning](#warning-call-to-__poll_chk_warn-declared-with-attribute-warning)
+    * [Core dump during make test](#core-dump-during-make-test)
+    * ["ImportError: No module named littleworkers" during make test_lang](#importerror-no-module-named-littleworkers-during-make-test_lang)
+    * ["No state file" during make test_lang](#no-state-file-during-make-test_lang)
+    * [Test failures during make test_lang](#test-failures-during-make-test_lang)
 * [gcc compile tips](#gcc-compile-tips)
 
 ## Introduction
