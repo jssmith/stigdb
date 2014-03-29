@@ -22,7 +22,7 @@
 ## Legal Stuff
 
 * [Code of Conduct](./Stig_CoC.md)
-* [License](../LICENSE.md)
+* [License](../LICENSE)
 * [Contributor License Agreement](./Stig_CLA.md)
     * [Appendix to CLA](./Stig_CLA-appendix.md)
 * [stigdb.org Privacy Policy](./privacy_policy.md)
