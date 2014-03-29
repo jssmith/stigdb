@@ -19,6 +19,7 @@
     * [make test_build](#make-test_build)
     * [make test_lang](#make-test_lang)
     * [make clean](#make-clean)
+* [Creating a Stig disk volume](#creating-a-stig-disk-volume)
 * [Hello World](#hello-world)
 * [Platform-specific](#platform-specific)
     * [Ubuntu (13.10 and above)](#ubuntu-1310-and-above)
@@ -56,6 +57,7 @@ export PATH=${PATH}:${HOME}/stig/src/tools
 make
 make test           (optional but recommended)
 make test_lang      (optional but recommended)
+sudo ~/stig/out/debug/stig/indy/disk/util/stig_dm --la --le --create-volume --device-speed=slow --instance-name=demo --num-devices=1 --stripe-size=512 <DEVICE>
 ```
 
 ### Release Build
@@ -78,6 +80,8 @@ make release
 make test           (optional but recommended)
 make test_lang      (optional but recommended)
 sudo make install PATH=${PATH}:${HOME}/stig/src/tools
+sudo stig_dm --la --le --create-volume --device-speed=slow --instance-name=demo --num-devices=1 --stripe-size=512 <DEVICE>
+
 ```
 
 ## Supported Platforms
@@ -272,6 +276,36 @@ sudo make install
 Deletes the `../.starsha/.notes` file, the `../out` directory and the `starsha` binary.
 
 This is an optional step. If you hit a build error, run this command before re-running the build.
+
+## Creating a Stig disk volume
+
+Stig databases are stored on their own block level device on the disk. This device is created and maintained using the [stig_dm](./stig_dm.md) utility.
+
+For debug builds, `stig_dm` is located in `~/stig/out/debug/stig/indy/disk/util`.
+
+For release builds, `stig_dm` is located in the directory specified in `PREFIX` at the start of the build. By default, that directory is `/usr/local/bin`.
+
+More detailed information about `stig_dm` is available in [the documentation](./stig_dm.md). For the sake of simplicity, the below command will work for most initial purposes:
+
+```
+sudo ./stig_dm —la —le —create-volume —strategy=stripe —device-speed=slow —instance-name=demo —num-devices=1 —stripe-size=512 <DEVICE>
+```
+In the command above, please replace `<DEVICE>` with the name of the device which you wish to use for the Stig volume. For example, if you have the following devices:
+
+```
+stig@stig-VirtualBox:~$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda2       9.9G  5.3G  4.2G  56% /
+none            4.0K     0  4.0K   0% /sys/fs/cgroup
+udev            2.0G  4.0K  2.0G   1% /dev
+tmpfs           396M  848K  395M   1% /run
+none            5.0M     0  5.0M   0% /run/lock
+none            2.0G  156K  2.0G   1% /run/shm
+none            100M   40K  100M   1% /run/user
+/dev/sda5        64Z   64Z  1.4G 100% /stig
+```
+
+The `<DEVICE>` in the command above would be replaced with `sda5`. Do not include the `/dev/`.
 
 ## Hello World
 
