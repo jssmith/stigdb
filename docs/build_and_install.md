@@ -89,7 +89,6 @@ make test           (optional but recommended)
 make test_lang      (optional but recommended)
 sudo make install PATH=${PATH}:${HOME}/stig/src/tools
 sudo stig_dm --la --le --create-volume --device-speed=slow --instance-name=demo --num-devices=1 --stripe-size=512 <DEVICE>
-
 ```
 
 ## Supported Platforms
