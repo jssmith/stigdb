@@ -19,6 +19,7 @@
     * [make test_build](#make-test_build)
     * [make test_lang](#make-test_lang)
     * [make clean](#make-clean)
+* [Hello World](#hello-world)
 * [Platform-specific](#platform-specific)
     * [Ubuntu (13.10 and above)](#ubuntu-1310-and-above)
     * [CentOS (6.4 and above)](#centos-64-and-above)
@@ -271,6 +272,10 @@ sudo make install
 Deletes the `../.starsha/.notes` file, the `../out` directory and the `starsha` binary.
 
 This is an optional step. If you hit a build error, run this command before re-running the build.
+
+## Hello World
+
+Follow the [Hello World directions](./hello_world.md) to create, compile, and run your first Stig operation.
 
 ## Platform-specific
 
