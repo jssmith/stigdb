@@ -103,8 +103,9 @@ The versions on which it is known to build and run:
 
 ### A note on VMs
 
-If you plan to build and install Stig on a virtual machine, please consider the following suggestions when configuring the machine:
+If you plan to build and install Stig on a virtual machine, please meet the following minimum requirements:
 
+* 2 cores
 * 4GB RAM minimum, 8GB RAM recommended
 * 12GB disk space minimum
 * Create a separate partition for the Stig block level device. This partition should be at least 1GB in size.
