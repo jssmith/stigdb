@@ -23,6 +23,7 @@ Stig is designed to make the most of your available system resources. It will us
 
 For development, we recommend the following virtual machine configuration:
 
+* A minimum of 2 cores are required.
 * 4GB RAM minimum, 8GB RAM recommended
 * 12GB disk space minimum
 * Create a separate partition for the Stig block level device. This partition should be at least 1GB in size.
