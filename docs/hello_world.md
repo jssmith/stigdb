@@ -53,13 +53,13 @@ Now that you have a package, it's time to fire up the server.
 
 ## Start the Stig server
 
-> Assuming you used the [Quick Start](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md#quick-start) in the [Building and Installing Stig](https://github.com/StigDB/stigdb/blob/master/docs/build_and_install.md) doc, you should have a Stig instance (database) named _demo_. If you named it something else, please update the commands below accordingly.
-
 Before you can run any Stig operations, you must start the Stig server. The command below will start the `stigi` server program as a daemon, use the `demo` instance, and enable logging:
 
 ```
-sudo stigi --create=false --la --le --d --iname=demo --starting_state=SOLO
+sudo stigi --create=true --la --le --d --iname=helloworld --starting_state=SOLO --mem_sim
 ```
+
+This command starts the server in _memory simulation_ mode. In this mode, the server will simulate a disk volume in memory. Because the data is not actually written to disk, when you stop the server, all data will be lost.
 
 ## Run the Stig client
 
