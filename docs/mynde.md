@@ -1,11 +1,10 @@
-Memcached on Stig
-=================
+# Stig Mynde: memcached on Stig
 
 In addition to it's own custom protocol, Stig speaks Memcached to be more easily accessible from arbitrary languages/hosts/etc. Memcached is literally available everywhere at this point.
 
-# Overview
+## Overview
 
-We aim to implement all of the memcached protocol with the same general guarantees that memcached gives, however because we utilize Points of View (TODO: Link) and tetris (TODO: Link) to resolve conflicting updates to the database rather than locks some operations may appear to produce different results (Multiple clients incr the same key won't all get different result values. All their increments will be counted though, and all will get one 'possible' value of the key).
+We aim to implement all of the memcached protocol with the same general guarantees that memcached gives, however because we utilize [Points of View](./pov.md) and tetris to resolve conflicting updates to the database rather than locks, some operations may appear to produce different results (Multiple clients incr the same key won't all get different result values. All their increments will be counted though, and all will get one 'possible' value of the key).
 
 Since Stig is a durable database rather than a cache, we only allow the TTL 0 meaning that keys live forever until deleted. We never cull keys to reclaim space under any circumstance. Once written to the database, things stay in the database until explicitly deleted.
 
@@ -84,3 +83,11 @@ TODO / TBD
 
 ## Replace
 TODO / TBD
+
+-----
+
+mynde.md Copyright 2010-2014 Stig LLC
+
+mynde.md is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
