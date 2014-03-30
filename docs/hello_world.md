@@ -64,3 +64,11 @@ This command starts the server in _memory simulation_ mode. In this mode, the se
 ## Run the Stig client
 
 stig_client --la --le
+
+-----
+
+hello_world.md Copyright 2010-2014 Stig LLC
+
+hello_world.md is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+
+You should have received a copy of the license along with this work. If not, see <http://creativecommons.org/licenses/by-sa/4.0/>.
