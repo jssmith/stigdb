@@ -6,6 +6,11 @@
 * [Build and Install](./build_and_install.md)
 * [Hello World](./hello_world.md)
 * [Stig Disk Manager](./stig_dm.md)
+* [Stigscript Compiler](./stigc.md)
+
+## Unit Tests
+
+* [Running Stig's Language Tests](./language_tests.md)
 
 ## Stig Concepts and Philosophies
 
