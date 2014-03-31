@@ -38,8 +38,9 @@
 #include <io/device.h>
 #include <stig/atom/core_vector.h>
 #include <stig/indy/disk/durable_manager.h>
-#include <stig/mynde/protocol.h>
 #include <stig/mynde/binary_protocol.h>
+#include <stig/mynde/protocol.h>
+#include <stig/mynde/value.h>
 #include <strm/past_end.h>
 #include <stig/protocol.h>
 #include <strm/fd.h>
@@ -1857,7 +1858,7 @@ void TServer::ServeMemcacheClient(TFd &&fd_original, const TAddress &client_addr
   assert(&fd_original);
   assert(&client_address);
 
-  //NOTE: fd_original has it's ownership stolen at this point. Use of it will cause badness.
+  // NOTE: fd_original has it's ownership stolen at this point. Use of it will cause badness.
   Strm::TFd<> strm(std::move(fd_original));
 
   const auto zero_ttl = std::chrono::seconds(0);
@@ -1883,25 +1884,23 @@ void TServer::ServeMemcacheClient(TFd &&fd_original, const TAddress &client_addr
 
   auto repo = pov->GetRepo(this);
 
-
   // NOTE: Should live the same time as context
   Atom::TSuprena context_arena;
 
   // Context for the current series of requests which we need to be consistent.
-  //TODO: Switch to a tri state that lives on the stack
-  //TODO: make_unique
+  // TODO: Switch to a tri state that lives on the stack
+  // TODO: make_unique
   std::unique_ptr<Indy::TContext> context(new Indy::TContext(repo, &context_arena));
 
-
-  //TODO: Detect protocol here (binary or text). Currently we only support binary.
+  // TODO: Detect protocol here (binary or text). Currently we only support binary.
   // Our input and output streams
-  //TODO: We want TRequest to genericize the binary and text streams to one thing.
-  //NOTE: We there should be no virtual calls in doing so.
+  // TODO: We want TRequest to genericize the binary and text streams to one thing.
+  // NOTE: We there should be no virtual calls in doing so.
   Strm::Bin::TIn in(&strm);
   Strm::Bin::TOut out(&strm);
 
   try {
-    //TODO: Detect and handle eof without an exception?
+    // TODO: Detect and handle eof without an exception?
 
     if (in.Peek() != Mynde::BinaryMagicRequest) {
       const char err_msg[] = "SERVER_ERROR text protocol is not supported.\r\n";
@@ -1910,10 +1909,10 @@ void TServer::ServeMemcacheClient(TFd &&fd_original, const TAddress &client_addr
     }
 
     // Loop processing requets until we hit eof or explicitly get an exit command.
-    //TODO: Detect and handle eof without an exception?
-    for(;;) {
-      //TODO: We should probably wait for notifications from indy somewhere...
-      //NOTE: We make this on the heap so that we can pass it to the response generation thread
+    // TODO: Detect and handle eof without an exception?
+    for (;;) {
+      // TODO: We should probably wait for notifications from indy somewhere...
+      // NOTE: We make this on the heap so that we can pass it to the response generation thread
       // We do the two threads because the protocol states that pending unread responses shouldn't block requests from
       // being read / handled
       Mynde::TRequest req(in);
@@ -1937,49 +1936,78 @@ void TServer::ServeMemcacheClient(TFd &&fd_original, const TAddress &client_addr
       Zero(hdr);
       hdr.Magic = Mynde::BinaryMagicResponse;
       hdr.Opcode = static_cast<uint8_t>(req.GetOpcode());
-      assert(req.GetOpcode() == Mynde::TRequest::TOpcode(hdr.Opcode)); // Make sure we round trip properly.
+      assert(req.GetOpcode() == Mynde::TRequest::TOpcode(hdr.Opcode));  // Make sure we round trip properly.
       hdr.Opaque = req.GetOpaque();
 
       // TODO: Genericize memcache key -> indy key conversion (Make it a function)
       switch (req.GetOpcode()) {
         case Mynde::TRequest::TOpcode::Get: {
           // TODO: Change keys and values to be start, limit based rather than doing this std::string marshalling
-          Native::TBlob key(req.GetKey().GetData(), req.GetKey().GetSize());
+          std::tuple<std::string> key(
+              std::string(reinterpret_cast<const char *>(req.GetKey().GetData()), req.GetKey().GetSize()));
 
           // Perform the Get
           // TODO: We don't have any reason to go from atom -> Sabot
           // TODO: The IndexKey has more stuff in it than we need / care about.
           void *state_alloc = alloca(Sabot::State::GetMaxStateSize());
-          Indy::TKey response_value = (*context)[Indy::TIndexKey(
+          Indy::TIndexKey indy_index_key(
               Mynde::MemcachedIndexUuid,
               Indy::TKey(
-                  Atom::TCore(&context_arena, Sabot::State::TAny::TWrapper(Native::State::New(key, state_alloc)))))];
+                  Atom::TCore(&context_arena, Sabot::State::TAny::TWrapper(Native::State::New(key, state_alloc)))));
 
           Atom::TCore void_comp;
-          if(req.GetFlags().Key) {
+          if (req.GetFlags().Key) {
             hdr.KeyLength = req.GetKey().GetSize();
           }
-          if (memcmp(&void_comp, &response_value.GetCore(), sizeof(void_comp)) == 0) {
+          if (!context->Exists(indy_index_key)) {
+            syslog(LOG_INFO, "Get of unset key %s", std::get<0>(key).c_str());
             if (!req.GetFlags().Quiet) {
               out << hdr;
-              if(req.GetFlags().Key) {
+              if (req.GetFlags().Key) {
                 out << req.GetKey();
               }
             }
           } else {
-            Native::TBlob value = Sabot::AsNative<Native::TBlob>(*Sabot::State::TAny::TWrapper(response_value.GetState(state_alloc)));
-            hdr.TotalBodyLength = value.size();
+            Indy::TKey response_value = (*context)[indy_index_key];
+            syslog(LOG_INFO, "Get of set key %s", std::get<0>(key).c_str());
+            Mynde::TValue value;
+            ToNative(*Sabot::State::TAny::TWrapper(response_value.GetState(state_alloc)), value);
+            static_assert(sizeof(value.Flags) == 4, "Sanity check the flags are indeed 4 bytes.");
+            hdr.ExtrasLength = 4;
+            hdr.TotalBodyLength = value.Value.size() + 4;
             out << hdr;
-            if(req.GetFlags().Key) {
+            out.WriteShallow(value.Flags);
+            if (req.GetFlags().Key) {
               out << req.GetKey();
             }
-            out.Write(value.c_str(), value.size());
+            out.Write(value.Value.c_str(), value.Value.size());
           }
           break;
         }
         case Mynde::TRequest::TOpcode::Set: {
-          Native::TBlob key(req.GetKey().GetData(), req.GetKey().GetSize());
-          Native::TBlob value(req.GetValue().GetData(), req.GetValue().GetSize());
+
+          // First 4 bytes are flags
+          uint32_t Flags = *(req.GetExtras().GetData());
+
+          // Second 4 bytes are expiration
+          uint32_t Expiration = *(req.GetExtras().GetData() + 4);
+
+          // We currently only allow keys which have no timeout / are persistent
+          if (Expiration != 0) {
+            // TODO: Return a proper binary error
+            // TODO: Throw an exception to close out the server ina  well logged way
+            const char err_msg[] = "SERVER_ERROR Only keys without an expiration are allowed (Expiration = 0)";
+            out.Write(err_msg, GetArrayLen(err_msg));
+            return;
+          }
+
+          std::tuple<std::string> key(
+              std::string(reinterpret_cast<const char *>(req.GetKey().GetData()), req.GetKey().GetSize()));
+          Mynde::TValue value{
+              std::string(reinterpret_cast<const char *>(req.GetValue().GetData()), req.GetValue().GetSize()), Flags};
+
+          syslog(LOG_INFO, "Set %s: %d %s", std::get<0>(key).c_str(), Flags, value.Value.c_str());
+
           auto transaction = RepoManager->NewTransaction();
           TUuid update_id(TUuid::Twister);
 
@@ -1988,7 +2016,7 @@ void TServer::ServeMemcacheClient(TFd &&fd_original, const TAddress &client_addr
           TMetaRecord meta_record(update_id,
                                   TMetaRecord::TEntry(session->GetId(),
                                                       session->GetUserId(),
-                                                      {"memcachememcache"},
+                                                      Stig::Mynde::PackageName,
                                                       "set",
                                                       {},
                                                       {},
@@ -2004,15 +2032,16 @@ void TServer::ServeMemcacheClient(TFd &&fd_original, const TAddress &client_addr
                   {Indy::TIndexKey(
                        Mynde::MemcachedIndexUuid,
                        Indy::TKey(Atom::TCore(&context_arena,
-                                              Sabot::State::TAny::TWrapper(Native::State::New(key, state_alloc))))),
+                                              Sabot::State::TAny::TWrapper(Native::State::New(key, state_alloc))),
+                                  &context_arena)),
                    Indy::TKey(Atom::TCore(&context_arena,
-                                          Sabot::State::TAny::TWrapper(Native::State::New(value, state_alloc_1))))}},
+                                          Sabot::State::TAny::TWrapper(Native::State::New(value, state_alloc_1))),
+                              &context_arena)}},
               Indy::TKey(meta_record, &context_arena, state_alloc_2),
               Indy::TKey(update_id, &context_arena, state_alloc_3));
           transaction->Push(repo, update);
           transaction->Prepare();
           transaction->CommitAction();
-
 
           // TODO: This is a horrible place for this to live / refactor massively...
           if (!req.GetFlags().Quiet) {
