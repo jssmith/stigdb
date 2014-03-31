@@ -1,10 +1,10 @@
 # Building and Installing Stig
 * [Introduction](#introduction)
+* [Supported Platforms](#supported-platforms)
+    * [A note on VMs](#a-note-on-vms)
 * [Quick Start](#quick-start)
     * [Debug (default)](#debug-build)
     * [Release](#release-build)
-* [Supported Platforms](#supported-platforms)
-    * [A note on VMs](#a-note-on-vms)
 * [Pre-Requisites](#pre-requisites)
     * [Compiler](#compiler)
     * [Libraries](#libraries)
@@ -40,6 +40,25 @@
 As the Stig project is still quite young, the build and installation process currently is fairly hands-on. As the project matures we will make this easier and faster. Please bear with us (and this process) as we grow.
 
 If you experience any problems with the build or this documentation, please [open a GitHub issue](https://github.com/StigDB/stigdb/blob/master/docs/contributing.md#open-github-issues) to report it.
+
+## Supported Platforms
+
+Stig should work on any Linux-based operating system which uses kernel version 2.6.32 or greater.
+
+The versions on which it is known to build and run:
+
+* [Ubuntu 13.10](http://releases.ubuntu.com/13.10/)
+* [CentOS 6.4](http://isoredirect.centos.org/centos/6/isos/x86_64/)
+* [Arch Linux](https://www.archlinux.org)
+
+### A note on VMs
+
+If you plan to build and install Stig on a virtual machine, please meet the following minimum requirements:
+
+* 2 cores
+* 4GB RAM minimum, 8GB RAM recommended
+* 12GB disk space minimum
+* Create a separate partition for the Stig block level device. This partition should be at least 1GB in size.
 
 ## Quick Start
 
@@ -90,25 +109,6 @@ make test_lang      (optional but recommended)
 sudo make install PATH=${PATH}:${HOME}/stig/src/tools
 sudo stig_dm --la --le --create-volume --device-speed=slow --instance-name=demo --num-devices=1 --stripe-size=512 <DEVICE>
 ```
-
-## Supported Platforms
-
-Stig should work on any Linux-based operating system which uses kernel version 2.6.32 or greater.
-
-The versions on which it is known to build and run:
-
-* [Ubuntu 13.10](http://releases.ubuntu.com/13.10/)
-* [CentOS 6.4](http://isoredirect.centos.org/centos/6/isos/x86_64/)
-* [Arch Linux](https://www.archlinux.org)
-
-### A note on VMs
-
-If you plan to build and install Stig on a virtual machine, please meet the following minimum requirements:
-
-* 2 cores
-* 4GB RAM minimum, 8GB RAM recommended
-* 12GB disk space minimum
-* Create a separate partition for the Stig block level device. This partition should be at least 1GB in size.
 
 ## Create a new partition/volume
 
@@ -214,7 +214,7 @@ After compilation completes, all binaries can be found under the `~/stig/out` di
 
 ### make
 
-Runs `bootstrap.sh`. This builds the `starsha` build tool and then builds the core Stig apps _in debug mode_. 
+Runs `bootstrap.sh`. This builds the `starsha` build tool and then builds the core Stig apps _in debug mode_.
 
 Behind the scenes, it's actually running these two commands:
 
@@ -223,7 +223,7 @@ make tools/starsha
 make apps
 ```
 
-> **NOTA BENE!** 
+> **NOTA BENE!**
 > The `starsha` build tool is designed to compile Stig as quickly as possible. In order to do this, it grabs as many system resources as it can. This means that running starsha _will peg your machine_. The build will finish relatively quickly, but in the duration you may find that other applications will not be very responsive.
 
 ### make test
@@ -246,7 +246,7 @@ If the debug binaries do not yet exist in `~/stig/out/debug`, running `make test
 
 Builds and then runs the Stig language tests.
 
-This is an optional step but is recommended. 
+This is an optional step but is recommended.
 
 This script uses the [littleworkers](https://pypi.python.org/pypi/littleworkers) Python library to run tests in parallel. This library must be installed in order to run `make test_lang`.
 
@@ -405,7 +405,7 @@ terminate called after throwing an instance of 'std::system_error'
   what(): Cannot allocate memory
 Aborted (core dumped)
 make: *** [test] Error 1
-stig@stig-VirtualBox:~/src$ 
+stig@stig-VirtualBox:~/src$
 ```
 
 ### "ImportError: No module named littleworkers" during `make test_lang`
@@ -456,11 +456,11 @@ Differs: Synth + Symbols
 ====================================================================
 Changes: general/mutablefilter.stig
 Differs: Synth + Symbols
-Change: 
+Change:
 Pass: ... SNIP ...
 Fail: general/random.stig,general/mutablefilter.stig
 Overall: 0 changed, 116 passed, 2 failed
-stig@stig-VirtualBox:~/stig/src$ 
+stig@stig-VirtualBox:~/stig/src$
 ```
 
 This run of `make test_lang` ends with a report of:
