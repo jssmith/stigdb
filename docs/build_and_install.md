@@ -3,6 +3,7 @@
 * [Supported Platforms](#supported-platforms)
     * [A note on VMs](#a-note-on-vms)
 * [Quick Start](#quick-start)
+    * [Prep for tests](#prep-for-tests)
     * [Debug (default)](#debug-build)
     * [Release](#release-build)
 * [Pre-Requisites](#pre-requisites)
@@ -63,6 +64,15 @@ If you plan to build and install Stig on a virtual machine, please meet the foll
 ## Quick Start
 
 The instructions below are for **UBUNTU 13.10**. Please modify them accordingly for your Linux distribution.
+
+### Prep for tests
+
+If you plan to run the test suites (optional but recommended), please do the following before starting the build:
+
+1. Set `rtprio` and `memlock` values [[see here](#core-dump-during-make-test)]
+1. Set `nofile` values [[see here](#no-state-file-during-make-test_lang)]
+1. Reboot to pick up the above settings
+1. Install `littleworkers` [[see here](#make-test_lang)]
 
 ### Debug Build
 
