@@ -5,6 +5,7 @@
 * [Quick Start](./build_and_install.md#quick-start)
 * [Build and Install](./build_and_install.md)
 * [Hello World](./hello_world.md)
+* [Stig Mynde](./mynde.md)
 * [Stig Disk Manager](./stig_dm.md)
 * [Stigscript Compiler](./stigc.md)
 
