@@ -7,7 +7,51 @@ This document will walk you through two different _Hello World_ scenarios:
 
 ## Stig Mynde
 
+### Start the Stig server
 
+Before you can run any Stig operations, you must start the Stig server. The command below will start the `stigi` server program as a daemon, use the `demo` instance, and enable logging:
+
+```
+sudo stigi --create=false --la --le --iname=helloworld --starting_state=SOLO --mem_sim --mem_sim_mb=512 --mem_sim_slow=256
+```
+
+This command starts the server in _memory simulation_ mode. In this mode, the server will simulate a disk volume in memory. Because the data is not actually written to disk, when you stop the server, all data will be lost.
+
+If this command succeeds, you should see a scroll of logging output. In order to stop the server, you must run `sudo kill -9 PID` on the process ID (aka _PID_) number in the logging output. This PID is the number in brackets after the command name (`stigi`) at the start of each line of logging output.
+
+** NOTA BENE!** In order to run the next step, you will need another terminal on the test machine.
+
+### Install required Python libraries
+
+The test script requires the following Python libraries:
+
+* memcached development libraries
+* Python development libraries
+* [pylibmc](http://sendapatch.se/projects/pylibmc/)
+
+Please install these on your system before proceeding. The Ubuntu commands for installing these is:
+
+```
+$ sudo apt-get install libmemcached-dev
+$ sudo apt-get install python-dev
+$ sudo pip install pylibmc
+```
+
+### Run `hello_world.py`
+
+The `hello_world.py` script tests whether the [Stig Mynde](./mynde.md) memcached integration is working as expected.
+
+This script is located in the source directory and, assuming a directory structure as suggested in the [Building and Installing Stig](./build_and_install.md) doc, can be run as follows:
+
+```
+$ cd ~/stig/src/stig/mynde
+$ ./hello_world.py
+Get Key hello: world
+```
+
+### Success!
+
+Congratulations! You've now your first Stig Mynde script!
 
 ## Stigscript Packages
 
