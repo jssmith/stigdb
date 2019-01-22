@@ -76,11 +76,11 @@ With respect to a Project that is designated as "Private," the preceding license
 
 ### Other Licenses/Terms. 
 
-The Projects are governed by their own terms regarding Submissions and require You to sign agreements (such as a [Stig Contributor License Agreement](https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA_Process.md) licensing Your rights in Your Submissions. In all such cases, and to the extent there is a conflict, the terms of those Projects and agreements take precedence over these Terms.
+The Projects are governed by their own terms regarding Submissions and require You to sign agreements (such as a [Stig Contributor License Agreement](Stig_CLA_Process.md) licensing Your rights in Your Submissions. In all such cases, and to the extent there is a conflict, the terms of those Projects and agreements take precedence over these Terms.
 
 ### Privacy. 
 
-You consent to the collection, processing and storage by the Host of any personal information provided by You in accordance with the terms of [Stig Privacy Policy](https://github.com/StigDB/stigdb/blob/master/docs/privacy_policy.md). You agree to comply with all applicable laws and regulations, and the terms of Stig Privacy Policy, with respect to any use by You of any personal information in connection with this Site.
+You consent to the collection, processing and storage by the Host of any personal information provided by You in accordance with the terms of [Stig Privacy Policy](privacy_policy.md). You agree to comply with all applicable laws and regulations, and the terms of Stig Privacy Policy, with respect to any use by You of any personal information in connection with this Site.
 
 ## MISCELLANEOUS.
 

@@ -13,7 +13,7 @@ on file prior to using any of Your Contributions. This helps us
 ensure that the intellectual property embodied within Stig products
 remains unencumbered for use by the whole community.
 
-Please review and submit this Agreement per [the instructions](https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA_Process.md).
+Please review and submit this Agreement per [the instructions](Stig_CLA_Process.md).
 
 A text-only version of this document is available at 
 https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA.txt.

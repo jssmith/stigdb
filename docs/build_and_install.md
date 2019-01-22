@@ -40,7 +40,7 @@
 
 As the Stig project is still quite young, the build and installation process currently is fairly hands-on. As the project matures we will make this easier and faster. Please bear with us (and this process) as we grow.
 
-If you experience any problems with the build or this documentation, please [open a GitHub issue](https://github.com/StigDB/stigdb/blob/master/docs/contributing.md#open-github-issues) to report it.
+If you experience any problems with the build or this documentation, please [open a GitHub issue](contributing.md#open-github-issues) to report it.
 
 ## Supported Platforms
 

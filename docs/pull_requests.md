@@ -2,7 +2,7 @@
 
 ## NOTA BENE!
 
-ALL CONTRIBUTIONS TO STIGDB REQUIRE A SIGNED [CONTRIBUTOR LICENSING AGREEMENT](https://github.com/StigDB/stigdb/blob/master/docs/Stig_CLA_Process.md).
+ALL CONTRIBUTIONS TO STIGDB REQUIRE A SIGNED [CONTRIBUTOR LICENSING AGREEMENT](Stig_CLA_Process.md).
 
 We will not be able to merge in any contributions until you have a signed CLA on file with us.
 

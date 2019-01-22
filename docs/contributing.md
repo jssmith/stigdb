@@ -6,11 +6,11 @@ There are many ways to be a part of the Stig community:
 
 ## Sign up for the mailing list
 
-The [Stig listserv](https://github.com/StigDB/stigdb/blob/master/docs/contact.md) is a great way to connect with the Stig community. It's open to Stig users, contributors, or even simply those who are Stig-curious.
+The [Stig listserv](contact.md) is a great way to connect with the Stig community. It's open to Stig users, contributors, or even simply those who are Stig-curious.
 
 ## Join the #stigdb IRC channel
 
-For more real-time communication and questions, there's the [#stigdb](https://github.com/StigDB/stigdb/blob/master/docs/contact.md) channel on Freenode.
+For more real-time communication and questions, there's the [#stigdb](contact.md) channel on Freenode.
 
 ## Open GitHub Issues
 
@@ -34,7 +34,7 @@ Pull requests are great! Thank you for all the work it took to get it written an
 
 Stig welcomes pull requests for all files stored in its [GitHub repository](https://github.com/stigdb/stigdb), be they code, unit tests, language tests, or documentation.
 
-To send a pull request, just follow [these steps](https://github.com/StigDB/stigdb/blob/master/docs/pull_requests.md).
+To send a pull request, just follow [these steps](pull_requests.md).
 
 -----
 
